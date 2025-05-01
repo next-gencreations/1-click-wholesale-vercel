@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1-Click-Wholesale | Barcode Scanner</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #4b5563;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --light: #f9fafb;
+      --dark: #111827;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--dark);
+      line-height: 1.6;
+      background-color: #000;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Scanner header */
+    .scanner-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 10;
+    }
+    
+    .scanner-title {
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    /* Scanner viewport */
+    .scanner-viewport {
+      flex-grow: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .mock-camera-feed {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(to bottom, #111, #000);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .mock-camera-feed::before {
+      content: '📷';
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    
+    .mock-camera-feed::after {
+      content: 'Camera would activate here';
+      color: white;
+      font-size: 0.9rem;
+    }
+    
+    .scanner-frame {
+      width: 80%;
+      max-width: 300px;
+      aspect-ratio: 1/1;
+      position: relative;
+      z-index: 5;
+    }
+    
+    .scan-area {
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.5);
+    }
+    
+    .scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--primary), transparent);
+      top: 50%;
+      animation: scanAnimation 2s ease-in-out infinite;
+    }
+    
+    @keyframes scanAnimation {
+      0% {
+        top: 0;
+        opacity: 0.5;
+      }
+      50% {
+        top: 100%;
+        opacity: 1;
+      }
+      100% {
+        top: 0;
+        opacity: 0.5;
+      }
+    }
+    
+    .corner {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-color: white;
+      border-style: solid;
+      border-width: 0;
+    }
+    
+    .corner-top-left {
+      top: -2px;
+      left: -2px;
+      border-top-width: 4px;
+      border-left-width: 4px;
+      border-top-left-radius: 15px;
+    }
+    
+    .corner-top-right {
+      top: -2px;
+      right: -2px;
+      border-top-width: 4px;
+      border-right-width: 4px;
+      border-top-right-radius: 15px;
+    }
+    
+    .corner-bottom-left {
+      bottom: -2px;
+      left: -2px;
+      border-bottom-width: 4px;
+      border-left-width: 4px;
+      border-bottom-left-radius: 15px;
+    }
+    
+    .corner-bottom-right {
+      bottom: -2px;
+      right: -2px;
+      border-bottom-width: 4px;
+      border-right-width: 4px;
+      border-bottom-right-radius: 15px;
+    }
+    
+    /* Positioning guide */
+    .positioning-guide {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      color: white;
+      bottom: calc(50% - 180px);
+      font-size: 0.9rem;
+      animation: fadeInOut 3s infinite;
+      z-index: 5;
+    }
+    
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    /* Control panel */
+    .control-panel {
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: space-around;
+    }
+    
+    .control-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .control-button:active {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(0.95);
+    }
+    
+    .button-label {
+      font-size: 0.7rem;
+      margin-top: 5px;
+      text-align: center;
+      color: white;
+    }
+    
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* Result panel (initially hidden) */
+    .result-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: white;
+      padding: 20px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 20;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .result-panel.show {
+      transform: translateY(0);
+    }
+    
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .result-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .close-result {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--secondary);
+      cursor: pointer;
+    }
+    
+    .product-result {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .product-image {
+      width: 80px;
+      height: 80px;
+      background-color: var(--light);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .product-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .product-info {
+      flex: 1;
+    }
+    
+    .product-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .product-price {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    
+    .product-profit {
+      display: inline-block;
+      background-color: var(--success);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+    
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--gray-500);
+    }
+    
+    .result-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .result-button {
+      flex: 1;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    .primary-button {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .secondary-button {
+      background-color: white;
+      border: 1px solid var(--gray-300);
+      color: var(--secondary);
+    }
+    
+    /* Utility animations */
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+      }
+    }
+    
+    /* Similar products section */
+    .similar-section {
+      margin-top: 20px;
+    }
+    
+    .similar-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    
+    .similar-products {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 15px;
+    }
+    
+    .similar-product {
+      min-width: 140px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: white;
+    }
+    
+    .similar-image {
+      height: 100px;
+      background-color: var(--light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .similar-image img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    
+    .similar-info {
+      padding: 10px;
+    }
+    
+    .similar-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .similar-price {
+      font-size: 1rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    /* Popularity meter */
+    .popularity-container {
+      margin: 15px 0;
+      padding: 15px;
+      background-color: var(--gray-100);
+      border-radius: 8px;
+    }
+    
+    .popularity-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .popularity-meter {
+      height: 8px;
+      background-color: var(--gray-300);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+    
+    .popularity-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--success), var(--primary));
+      border-radius: 4px;
+    }
+    
+    .popularity-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--gray-500);
+    }
+    
+    /* Barcode format info */
+    .barcode-info {
+      background-color: var(--gray-100);
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin: 15px 0;
+      font-size: 0.9rem;
+    }
+    
+    .barcode-label {
+      font-weight: 600;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Scanner Header -->
+  <header class="scanner-header">
+    <div class="scanner-title">Barcode Scanner</div>
+    <button class="close-button" id="close-scanner">✕</button>
+  </header>
+
+  <!-- Scanner Viewport -->
+  <div class="scanner-viewport">
+    <div class="mock-camera-feed"></div>
+    
+    <div class="positioning-guide">
+      Center the barcode in the frame
+    </div>
+    
+    <div class="scanner-frame">
+      <div class="scan-area">
+        <div class="scan-line"></div>
+        <div class="corner corner-top-left"></div>
+        <div class="corner corner-top-right"></div>
+        <div class="corner corner-bottom-left"></div>
+        <div class="corner corner-bottom-right"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Control Panel -->
+  <div class="control-panel">
+    <div class="control-item">
+      <button class="control-button" id="flash-toggle">⚡</button>
+      <div class="button-label">Flash</div>
+    </div>
+    
+    <div class="control-item">
+      <button class="control-button pulse" id="capture-button">📷</button>
+      <div class="button-label">Capture</div>
+    </div>
+    
+    <div class="control-item">
+      <button class="control-button" id="flip-camera">🔄</button>
+      <div class="button-label">Flip</div>
+    </div>
+  </div>
+
+  <!-- Result Panel (initially hidden) -->
+  <div class="result-panel" id="result-panel">
+    <div class="result-header">
+      <div class="result-title">Scan Result</div>
+      <button class="close-result" id="close-result">✕</button>
+    </div>
+    
+    <div class="barcode-info">
+      <span class="barcode-label">Barcode:</span>
+      <span id="barcode-value">7350053850019</span>
+      <span id="barcode-type">(EAN-13)</span>
+    </div>
+    
+    <div class="product-result">
+      <div class="product-image">
+        <img src="https://images.unsplash.com/photo-1622480916113-9897a97b5da9" alt="Product">
+      </div>
+      
+      <div class="product-info">
+        <div class="product-name">Professional Grade Electric Mixer</div>
+        <div class="product-price">
+          $249.99
+          <span class="product-profit">+35% Profit</span>
+        </div>
+        <div class="product-meta">
+          <div>KitchenPro Supplies</div>
+          <div>4.8 ★</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="popularity-container">
+      <div class="popularity-title">
+        📊 Demand Popularity
+      </div>
+      <div class="popularity-meter">
+        <div class="popularity-fill" style="width: 78%"></div>
+      </div>
+      <div class="popularity-labels">
+        <div>Low Demand</div>
+        <div>High Demand</div>
+      </div>
+    </div>
+    
+    <div class="similar-section">
+      <div class="similar-title">Similar Products</div>
+      
+      <div class="similar-products">
+        <div class="similar-product">
+          <div class="similar-image">
+            <img src="https://images.unsplash.com/photo-1622480916113-9897a97b5da9" alt="Similar Product">
+          </div>
+          <div class="similar-info">
+            <div class="similar-name">Kitchen Mixer Pro</div>
+            <div class="similar-price">$229.99</div>
+          </div>
+        </div>
+        
+        <div class="similar-product">
+          <div class="similar-image">
+            <img src="https://images.unsplash.com/photo-1622480916113-9897a97b5da9" alt="Similar Product">
+          </div>
+          <div class="similar-info">
+            <div class="similar-name">Premium Stand Mixer</div>
+            <div class="similar-price">$289.99</div>
+          </div>
+        </div>
+        
+        <div class="similar-product">
+          <div class="similar-image">
+            <img src="https://images.unsplash.com/photo-1622480916113-9897a97b5da9" alt="Similar Product">
+          </div>
+          <div class="similar-info">
+            <div class="similar-name">Basic Kitchen Mixer</div>
+            <div class="similar-price">$179.99</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="result-actions">
+      <button class="result-button secondary-button" id="scan-again">
+        Scan Again
+      </button>
+      <button class="result-button primary-button" id="view-details">
+        View Details
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements
+      const closeScanner = document.getElementById('close-scanner');
+      const flashToggle = document.getElementById('flash-toggle');
+      const captureButton = document.getElementById('capture-button');
+      const flipCamera = document.getElementById('flip-camera');
+      const resultPanel = document.getElementById('result-panel');
+      const closeResult = document.getElementById('close-result');
+      const scanAgain = document.getElementById('scan-again');
+      const viewDetails = document.getElementById('view-details');
+      
+      // State
+      let flashOn = false;
+      
+      // Mock barcode scanning
+      captureButton.addEventListener('click', () => {
+        // Simulate a successful scan
+        setTimeout(() => {
+          resultPanel.classList.add('show');
+        }, 500);
+      });
+      
+      // Toggle flash
+      flashToggle.addEventListener('click', () => {
+        flashOn = !flashOn;
+        flashToggle.textContent = flashOn ? '⚡️' : '⚡';
+        // In a real app, would toggle the device flash here
+      });
+      
+      // Flip camera
+      flipCamera.addEventListener('click', () => {
+        // In a real app, would switch between front and back cameras
+        alert('Camera flipped');
+      });
+      
+      // Close scanner
+      closeScanner.addEventListener('click', () => {
+        window.location.href = '/mobile-app.html';
+      });
+      
+      // Close result panel
+      closeResult.addEventListener('click', () => {
+        resultPanel.classList.remove('show');
+      });
+      
+      // Scan again
+      scanAgain.addEventListener('click', () => {
+        resultPanel.classList.remove('show');
+      });
+      
+      // View details
+      viewDetails.addEventListener('click', () => {
+        alert('Would navigate to product details page');
+        // In a real app, would navigate to the product details page
+        // window.location.href = `/product-details.html?id=${productId}`;
+      });
+    });
+  </script>
+</body>
+</html>
