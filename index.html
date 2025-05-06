@@ -452,22 +452,25 @@
 
   <div class="main">
     <div class="search-bar">
-      <input type="text" class="search-input" placeholder="Search for products...">
-      <button class="search-button">Search</button>
+      <input type="text" class="search-input" placeholder="Search for products..." id="search-input">
+      <button class="search-button" id="search-button">Search</button>
     </div>
 
     <div class="filters-container">
       <div class="filter-categories">
-        <button class="filter-button active">All Products</button>
-        <button class="filter-button">Kitchen</button>
-        <button class="filter-button">Electronics</button>
+        <button class="filter-button active" data-category="all">All Products</button>
+        <button class="filter-button" data-category="Kitchen">Kitchen</button>
+        <button class="filter-button" data-category="Electronics">Electronics</button>
+        <button class="filter-button" data-category="Home Decor">Home Decor</button>
+        <button class="filter-button" data-category="Furniture">Furniture</button>
+        <button class="filter-button" data-category="Wearables">Wearables</button>
       </div>
       <div class="filter-actions">
         <div class="view-toggle">
-          <button class="view-toggle-btn active">List</button>
-          <button class="view-toggle-btn">Grid</button>
+          <button class="view-toggle-btn active" id="list-view">List</button>
+          <button class="view-toggle-btn" id="grid-view">Grid</button>
         </div>
-        <select class="sort-dropdown">
+        <select class="sort-dropdown" id="sort-dropdown">
           <option value="default">Sort By: Featured</option>
           <option value="price-low">Price: Low to High</option>
           <option value="price-high">Price: High to Low</option>
@@ -483,22 +486,81 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Store all products
+      let allProducts = [];
+      let currentCategory = 'all';
+      let currentSort = 'default';
+      let currentView = 'list';
+      let searchTerm = '';
+
       // Fetch products
       fetch('/api/products')
         .then(response => response.json())
         .then(data => {
-          renderProducts(data.products);
+          allProducts = data.products;
+          filterAndRenderProducts();
         })
         .catch(error => {
           console.error('Error fetching products:', error);
           // Fallback to local data if API fails
-          renderProducts(getLocalProducts());
+          allProducts = getLocalProducts();
+          filterAndRenderProducts();
         });
+
+      // Function to filter and render products
+      function filterAndRenderProducts() {
+        let filteredProducts = [...allProducts];
+        
+        // Apply category filter
+        if (currentCategory !== 'all') {
+          filteredProducts = filteredProducts.filter(product => 
+            product.category === currentCategory
+          );
+        }
+        
+        // Apply search filter
+        if (searchTerm) {
+          const term = searchTerm.toLowerCase();
+          filteredProducts = filteredProducts.filter(product => 
+            product.name.toLowerCase().includes(term) || 
+            product.description.toLowerCase().includes(term) ||
+            product.category.toLowerCase().includes(term)
+          );
+        }
+        
+        // Apply sorting
+        switch(currentSort) {
+          case 'price-low':
+            filteredProducts.sort((a, b) => a.price - b.price);
+            break;
+          case 'price-high':
+            filteredProducts.sort((a, b) => b.price - a.price);
+            break;
+          case 'rating':
+            filteredProducts.sort((a, b) => b.rating - a.rating);
+            break;
+          default:
+            // Default sorting (featured) prioritizes top sellers
+            filteredProducts.sort((a, b) => {
+              if (a.isTopSeller && !b.isTopSeller) return -1;
+              if (!a.isTopSeller && b.isTopSeller) return 1;
+              return 0;
+            });
+        }
+        
+        renderProducts(filteredProducts);
+        updateFilterButtons();
+      }
 
       // Function to render products
       function renderProducts(products) {
         const container = document.getElementById('products-container');
         container.innerHTML = '';
+        
+        if (products.length === 0) {
+          container.innerHTML = '<div class="no-results">No products found. Try a different search or filter.</div>';
+          return;
+        }
         
         products.forEach(product => {
           // Calculate stock percentage for indicator
@@ -523,7 +585,7 @@
           }
 
           const productCard = document.createElement('div');
-          productCard.className = 'product-card';
+          productCard.className = `product-card ${currentView === 'grid' ? 'grid-view' : ''}`;
           productCard.innerHTML = `
             <div class="product-content">
               <div class="product-image-container">
@@ -566,6 +628,63 @@
         });
       }
 
+      function updateFilterButtons() {
+        const filterButtons = document.querySelectorAll('.filter-button');
+        filterButtons.forEach(button => {
+          if (button.dataset.category === currentCategory) {
+            button.classList.add('active');
+          } else {
+            button.classList.remove('active');
+          }
+        });
+      }
+
+      // Event listeners for filter buttons
+      const filterButtons = document.querySelectorAll('.filter-button');
+      filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          currentCategory = this.dataset.category;
+          filterAndRenderProducts();
+        });
+      });
+
+      // Event listeners for view toggle
+      const viewToggleButtons = document.querySelectorAll('.view-toggle-btn');
+      viewToggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          viewToggleButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          if (this.id === 'grid-view') {
+            currentView = 'grid';
+          } else {
+            currentView = 'list';
+          }
+          
+          filterAndRenderProducts();
+        });
+      });
+      
+      // Event listener for sort dropdown
+      document.getElementById('sort-dropdown').addEventListener('change', function() {
+        currentSort = this.value;
+        filterAndRenderProducts();
+      });
+      
+      // Event listener for search
+      document.getElementById('search-button').addEventListener('click', function() {
+        searchTerm = document.getElementById('search-input').value;
+        filterAndRenderProducts();
+      });
+      
+      // Allow searching with Enter key
+      document.getElementById('search-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          searchTerm = this.value;
+          filterAndRenderProducts();
+        }
+      });
+
       // Fallback products if API fails
       function getLocalProducts() {
         return [
@@ -581,6 +700,39 @@
             isTopSeller: true
           },
           {
+            id: 2,
+            name: "Smart Home Hub with Voice Control",
+            price: 129.99,
+            description: "Control your entire home with this smart hub featuring advanced voice recognition.",
+            category: "Electronics",
+            stock: 8,
+            rating: 4.5,
+            image: "https://cdn-icons-png.flaticon.com/512/2936/2936585.png",
+            isTopSeller: false
+          },
+          {
+            id: 3,
+            name: "Abstract Canvas Wall Art Set",
+            price: 89.99,
+            description: "Set of 3 high-quality canvas prints with modern abstract designs to enhance any room.",
+            category: "Home Decor",
+            stock: 32,
+            rating: 4.7,
+            image: "https://cdn-icons-png.flaticon.com/512/2342/2342938.png",
+            isTopSeller: false
+          },
+          {
+            id: 4,
+            name: "Mid-Century Modern Coffee Table",
+            price: 159.99,
+            description: "Elegant coffee table featuring solid wood construction with mid-century modern aesthetics.",
+            category: "Furniture",
+            stock: 12,
+            rating: 4.6,
+            image: "https://cdn-icons-png.flaticon.com/512/2662/2662308.png",
+            isTopSeller: false
+          },
+          {
             id: 5,
             name: "Stainless Steel Kitchen Knife Set",
             price: 45.99,
@@ -592,6 +744,28 @@
             isTopSeller: true
           },
           {
+            id: 6,
+            name: "Advanced Fitness & Activity Tracker",
+            price: 79.99,
+            description: "Water-resistant tracker with heart rate monitoring, sleep tracking, and 7-day battery life.",
+            category: "Wearables",
+            stock: 5,
+            rating: 4.9,
+            image: "https://cdn-icons-png.flaticon.com/512/3165/3165590.png",
+            isTopSeller: false
+          },
+          {
+            id: 7,
+            name: "Digital Air Fryer with 8 Presets",
+            price: 119.99,
+            description: "Cook healthier meals with this 5.8-quart digital air fryer featuring 8 cooking presets.",
+            category: "Kitchen",
+            stock: 25,
+            rating: 4.7,
+            image: "https://cdn-icons-png.flaticon.com/512/1065/1065570.png",
+            isTopSeller: false
+          },
+          {
             id: 8,
             name: "Wireless Noise-Cancelling Headphones",
             price: 199.99,
@@ -601,29 +775,31 @@
             rating: 4.8,
             image: "https://cdn-icons-png.flaticon.com/512/2536/2536050.png",
             isTopSeller: true
+          },
+          {
+            id: 9,
+            name: "Minimalist LED Floor Lamp",
+            price: 129.99,
+            description: "Modern floor lamp with dimmable LED, adjustable height, and sleek minimalist design.",
+            category: "Home Decor",
+            stock: 10,
+            rating: 4.5,
+            image: "https://cdn-icons-png.flaticon.com/512/8053/8053017.png",
+            isTopSeller: false
+          },
+          {
+            id: 10,
+            name: "Ergonomic Office Chair",
+            price: 229.99,
+            description: "Fully adjustable office chair with lumbar support, breathable mesh back, and smooth castors.",
+            category: "Furniture",
+            stock: 7,
+            rating: 4.8,
+            image: "https://cdn-icons-png.flaticon.com/512/2647/2647519.png",
+            isTopSeller: false
           }
         ];
       }
-
-      // Event listeners for filter buttons
-      const filterButtons = document.querySelectorAll('.filter-button');
-      filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          filterButtons.forEach(btn => btn.classList.remove('active'));
-          this.classList.add('active');
-          // You would add filtering logic here
-        });
-      });
-
-      // Event listeners for view toggle
-      const viewToggleButtons = document.querySelectorAll('.view-toggle-btn');
-      viewToggleButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          viewToggleButtons.forEach(btn => btn.classList.remove('active'));
-          this.classList.add('active');
-          // You would add view switching logic here
-        });
-      });
     });
   </script>
 </body>
