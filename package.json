@@ -1,0 +1,11 @@
+{
+  "name": "1-click-wholesale",
+  "version": "1.0.0",
+  "description": "Amazon affiliate marketing platform",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'No build step required'"
+  },
+  "author": "",
+  "license": "ISC"
+}

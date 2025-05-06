@@ -1,40 +1,24 @@
-# 1-Click-Wholesale Vercel Deployment
+# 1-Click-Wholesale (Static Version)
 
-This folder contains a minimal version of the 1-Click-Wholesale application specifically optimized for Vercel deployment.
+This is a static version of the 1-Click-Wholesale application for Vercel deployment.
 
-## Simple Deployment Instructions
+## Features
 
-1. Go to your Vercel dashboard (vercel.com)
-2. Click "Add New" -> "Project"
-3. Import your GitHub repository or upload this `vercel` folder directly
-4. **Important**: Set the Root Directory to `vercel` (this folder)
-5. Click "Deploy"
+- Completely static HTML with no external dependencies
+- All product data embedded directly in the HTML
+- No API calls or server requirements
+- Simple and reliable
 
-## What's Included
+## Deployment
 
-- `index.html`: Simple product listing page
-- `api/index.js`: Serverless API function that returns product data
-- `vercel.json`: Configuration file for Vercel deployment
+This version is specifically designed for easy deployment to Vercel. Simply connect your GitHub repository to Vercel and deploy from the `vercel-minimal` directory.
 
-## Testing the Deployment
+## Usage
 
-After deployment:
+1. Navigate to the deployed site
+2. Browse the products by category
+3. Use the search box to find specific products
 
-1. Visit your deployment URL to see the frontend
-2. Visit `[your-url]/api` to see the API response
+## Customization
 
-## Troubleshooting
-
-If you encounter issues:
-
-1. Check the Function Logs in your Vercel dashboard
-2. Verify that the Root Directory is set to `vercel`
-3. Make sure the vercel.json file is being recognized
-
-## Next Steps
-
-Once this simple deployment is working, you can:
-
-1. Add more API endpoints to the `api` folder
-2. Enhance the frontend with more features
-3. Add authentication and user management
+To add or modify products, edit the `products` array in the `index.html` file.
