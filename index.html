@@ -1,212 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>1-Click Profit Finder</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1-Click Profit Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #EEF4F2;
+      padding: 20px;
+      margin: 0;
+    }
 
-<style>
-body {
-  font-family: Arial;
-  margin: 0;
-  background: #eef2f5;
-}
+    .card {
+      max-width: 500px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-sizing: border-box;
+    }
 
-.container {
-  padding: 20px;
-}
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+    .readonly {
+      background: #f7f7f7;
+    }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
+    .main-btn, .scan-btn, .link-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-button {
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  margin-top: 10px;
-  width: 100%;
-}
+    .main-btn {
+      background: #5D8A7A;
+    }
 
-.green { background: #4CAF50; color: white; }
-.blue { background: #2196F3; color: white; }
-.grey { background: #777; color: white; }
-.main-btn { background: #5f8f7f; color: white; }
+    .button-row {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
 
-#scannerScreen {
-  display: none;
-  background: black;
-  color: white;
-  height: 100vh;
-  text-align: center;
-  padding: 20px;
-}
+    .scan-btn {
+      flex: 1;
+      background: #4CAF50;
+    }
 
-.scan-box {
-  border: 4px solid white;
-  border-radius: 20px;
-  height: 200px;
-  margin: 20px 0;
-}
+    .link-btn {
+      flex: 1;
+      background: #2196F3;
+    }
 
-.result {
-  margin-top: 15px;
-  padding: 15px;
-  border-radius: 10px;
-  display: none;
-}
-</style>
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      display: none;
+      background: #EEF4F2;
+    }
+
+    #result p {
+      margin: 0 0 8px 0;
+      color: #24323D;
+      font-weight: 600;
+    }
+
+    #verdict {
+      margin: 10px 0 0 0;
+      color: #24323D;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #425564;
+      font-size: 16px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      color: #24323D;
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- MAIN SCREEN -->
-<div id="mainScreen" class="container">
   <div class="card">
     <h2>1-Click Profit Finder</h2>
 
     <label>Product</label>
-    <input id="product" placeholder="Will fill from scanner">
+    <input
+      id="productName"
+      type="text"
+      placeholder="Will fill from scanner"
+      readonly
+      class="readonly"
+    />
 
     <label>Scanned Barcode</label>
-    <input id="barcode" placeholder="Will fill from scanner">
+    <input
+      id="barcode"
+      type="text"
+      placeholder="Will fill from scanner"
+      readonly
+      class="readonly"
+    />
 
     <label>Buy Price (£)</label>
-    <input id="buy" placeholder="e.g. 5">
+    <input
+      id="buy"
+      type="number"
+      step="0.01"
+      placeholder="e.g. 5"
+    />
 
     <label>Amazon Price (£)</label>
-    <input id="amazon" placeholder="e.g. 12">
+    <input
+      id="amazon"
+      type="number"
+      step="0.01"
+      placeholder="e.g. 12"
+    />
 
     <button class="main-btn" onclick="calculate()">Check Profit</button>
 
-    <div id="result" class="result">
-      <div id="fee"></div>
-      <div id="profit"></div>
-      <div id="roi"></div>
-      <strong id="verdict"></strong>
+    <div class="button-row">
+      <button class="scan-btn" onclick="goToScanner()">📷 Scan Barcode</button>
+      <button class="link-btn" onclick="pasteAmazonLink()">🔗 Paste Link</button>
     </div>
 
-    <button class="green" onclick="openScanner()">📷 Scan Barcode</button>
-    <button class="blue">🔗 Paste Link</button>
+    <div id="result">
+      <p id="fee"></p>
+      <p id="profit"></p>
+      <p id="roi"></p>
+      <h3 id="verdict"></h3>
+    </div>
   </div>
-</div>
 
-<!-- SCANNER SCREEN -->
-<div id="scannerScreen">
-  <h2>📷 Scan Barcode</h2>
+  <script>
+    function goToScanner() {
+      window.location.href = "barcode-scanner.html";
+    }
 
-  <div class="scan-box"></div>
-  <p>Starting camera...</p>
+    window.onload = function () {
+      const scannedBarcode = localStorage.getItem("scannedBarcode");
+      const scannedPrice = localStorage.getItem("scannedPrice");
+      const scannedName = localStorage.getItem("scannedName");
 
-  <button class="green" onclick="startCamera()">▶ Start</button>
-  <button class="grey" onclick="stopCamera()">⏸ Stop</button>
-  <button class="blue" onclick="demoScan()">📦 Demo Scan</button>
+      if (scannedBarcode) {
+        document.getElementById("barcode").value = scannedBarcode;
+        localStorage.removeItem("scannedBarcode");
+      }
 
-  <br><br>
-  <button class="grey" onclick="goBack()">← Back</button>
+      if (scannedPrice) {
+        document.getElementById("amazon").value = scannedPrice;
+        localStorage.removeItem("scannedPrice");
+      }
 
-  <div id="demoList" style="margin-top:20px;"></div>
-</div>
+      if (scannedName) {
+        document.getElementById("productName").value = scannedName;
+        localStorage.removeItem("scannedName");
+      }
+    };
 
-<script>
+    function calculate() {
+      const buy = parseFloat(document.getElementById("buy").value);
+      const amazon = parseFloat(document.getElementById("amazon").value);
 
-// OPEN SCANNER
-function openScanner() {
-  document.getElementById("mainScreen").style.display = "none";
-  document.getElementById("scannerScreen").style.display = "block";
-}
+      if (!buy || !amazon) return;
 
-// BACK
-function goBack() {
-  document.getElementById("mainScreen").style.display = "block";
-  document.getElementById("scannerScreen").style.display = "none";
-}
+      const fee = amazon * 0.15;
+      const profit = amazon - fee - buy;
+      const roi = ((profit / buy) * 100).toFixed(1);
 
-<button class="green" onclick="window.location.href='barcode-scanner.html'">
-  📷 Scan Barcode
-</button>
+      document.getElementById("fee").innerText = "Amazon Fee: £" + fee.toFixed(2);
+      document.getElementById("profit").innerText = "Profit: £" + profit.toFixed(2);
+      document.getElementById("roi").innerText = "ROI: " + roi + "%";
 
-function stopCamera() {
-  alert("Camera stopped");
-}
+      let verdict = "";
+      let color = "";
 
-// DEMO PRODUCTS
-const demoProducts = [
-  { name: "Wireless Earbuds", barcode: "5011111111111", price: 24.99 },
-  { name: "Smart Watch", barcode: "5012345678901", price: 39.99 },
-  { name: "Bluetooth Speaker", barcode: "5022222222222", price: 18.50 },
-  { name: "Phone Charger", barcode: "5033333333333", price: 11.99 }
-];
+      if (roi > 40) {
+        verdict = "🔥 Great opportunity";
+        color = "#C8E6C9";
+      } else if (roi > 20) {
+        verdict = "👍 Worth a look";
+        color = "#FFF3CD";
+      } else {
+        verdict = "❌ Probably skip";
+        color = "#FFCDD2";
+      }
 
-// SHOW DEMO LIST
-function demoScan() {
-  let html = "<h3>Choose a sample product</h3>";
-  demoProducts.forEach((p, i) => {
-    html += `<button class="green" onclick="selectProduct(${i})">${p.name} - £${p.price}</button>`;
-  });
-  document.getElementById("demoList").innerHTML = html;
-}
+      document.getElementById("verdict").innerText = verdict;
 
-// SELECT PRODUCT
-function selectProduct(i) {
-  const p = demoProducts[i];
+      const resultBox = document.getElementById("result");
+      resultBox.style.display = "block";
+      resultBox.style.background = color;
+    }
 
-  document.getElementById("product").value = p.name;
-  document.getElementById("barcode").value = p.barcode;
-  document.getElementById("amazon").value = p.price;
-
-  goBack();
-}
-
-// CALCULATE (UPDATED 🔥)
-function calculate() {
-  const buy = parseFloat(document.getElementById("buy").value);
-  const amazon = parseFloat(document.getElementById("amazon").value);
-
-  if (!buy || !amazon) return;
-
-  const fee = amazon * 0.15;
-  const profit = amazon - fee - buy;
-  const roi = ((profit / buy) * 100).toFixed(1);
-
-  document.getElementById("fee").innerText = "Amazon Fee: £" + fee.toFixed(2);
-  document.getElementById("profit").innerText = "Profit: £" + profit.toFixed(2);
-  document.getElementById("roi").innerText = "ROI: " + roi + "%";
-
-  let verdict = "";
-  let color = "";
-
-  if (roi > 40) {
-    verdict = "🔥 Great opportunity";
-    color = "#C8E6C9";
-  } else if (roi > 20) {
-    verdict = "👍 Worth a look";
-    color = "#FFF3CD";
-  } else {
-    verdict = "❌ Probably skip";
-    color = "#FFCDD2";
-  }
-
-  document.getElementById("verdict").innerText = verdict;
-
-  const resultBox = document.getElementById("result");
-  resultBox.style.display = "block";
-  resultBox.style.background = color;
-}
-
-</script>
+    function pasteAmazonLink() {
+      const link = prompt("Paste Amazon product link:");
+      if (link) {
+        alert("Link saved for future Amazon lookup.");
+      }
+    }
+  </script>
 
 </body>
 </html>
