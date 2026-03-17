@@ -10,23 +10,37 @@
       background: #EEF4F2;
       padding: 20px;
       margin: 0;
+      color: #24323D;
     }
 
     .card {
-      max-width: 500px;
-      margin: 40px auto;
+      max-width: 520px;
+      margin: 30px auto;
       background: white;
-      padding: 20px;
-      border-radius: 20px;
+      padding: 22px;
+      border-radius: 22px;
       box-sizing: border-box;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      color: #425564;
+      font-size: 16px;
+      font-weight: 600;
     }
 
     input {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
+      padding: 12px;
+      margin-bottom: 4px;
+      border-radius: 12px;
+      border: 1px solid #cfcfcf;
       box-sizing: border-box;
       font-size: 16px;
     }
@@ -35,19 +49,22 @@
       background: #f7f7f7;
     }
 
-    .main-btn, .scan-btn, .link-btn {
+    .main-btn, .scan-btn, .link-btn, .save-btn, .clear-btn {
       width: 100%;
-      padding: 12px;
+      padding: 13px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       color: white;
       cursor: pointer;
       font-size: 16px;
+      font-weight: 600;
     }
 
-    .main-btn {
-      background: #5D8A7A;
-    }
+    .main-btn { background: #5D8A7A; }
+    .scan-btn { background: #4CAF50; }
+    .link-btn { background: #2196F3; }
+    .save-btn { background: #FF9800; }
+    .clear-btn { background: #777; }
 
     .button-row {
       margin-top: 15px;
@@ -55,46 +72,94 @@
       gap: 10px;
     }
 
-    .scan-btn {
-      flex: 1;
-      background: #4CAF50;
-    }
-
-    .link-btn {
-      flex: 1;
-      background: #2196F3;
+    .message {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #E8F5E9;
+      color: #2e7d32;
+      display: none;
+      font-weight: 600;
     }
 
     #result {
       margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
+      padding: 16px;
+      border-radius: 14px;
       display: none;
       background: #EEF4F2;
     }
 
-    #result p {
+    .result-line {
       margin: 0 0 8px 0;
-      color: #24323D;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .small-line {
+      margin: 0 0 8px 0;
       font-weight: 600;
-    }
-
-    #verdict {
-      margin: 10px 0 0 0;
-      color: #24323D;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      color: #425564;
       font-size: 16px;
     }
 
-    h2 {
-      text-align: center;
-      margin-top: 0;
-      color: #24323D;
+    .section {
+      margin-top: 24px;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+    }
+
+    .history-item, .saved-item {
+      background: #F7FAF9;
+      border: 1px solid #dde7e2;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .item-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .muted {
+      color: #5f6f79;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .empty {
+      color: #7b8a93;
+      margin-top: 10px;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      background: #F7FAF9;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .switch-row label {
+      margin: 0;
+    }
+
+    .footer-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-actions button {
+      flex: 1;
     }
   </style>
 </head>
@@ -127,6 +192,7 @@
       type="number"
       step="0.01"
       placeholder="e.g. 5"
+      oninput="calculateIfReady()"
     />
 
     <label>Amazon Price (£)</label>
@@ -135,7 +201,13 @@
       type="number"
       step="0.01"
       placeholder="e.g. 12"
+      oninput="calculateIfReady()"
     />
+
+    <div class="switch-row">
+      <label for="vatToggle">Include VAT estimate (20%)</label>
+      <input id="vatToggle" type="checkbox" onchange="calculateIfReady()" />
+    </div>
 
     <button class="main-btn" onclick="calculate()">Check Profit</button>
 
@@ -144,12 +216,30 @@
       <button class="link-btn" onclick="pasteAmazonLink()">🔗 Paste Link</button>
     </div>
 
+    <div id="scanMessage" class="message">✅ Product scanned successfully</div>
+
     <div id="result">
-      <p id="fee"></p>
-      <p id="profit"></p>
-      <p id="roi"></p>
+      <p id="fee" class="small-line"></p>
+      <p id="vatLine" class="small-line"></p>
+      <p id="profit" class="result-line"></p>
+      <p id="roi" class="result-line"></p>
       <h3 id="verdict"></h3>
+
+      <div class="footer-actions">
+        <button class="save-btn" onclick="saveDeal()">⭐ Save Deal</button>
+        <button class="clear-btn" onclick="clearForm()">🗑 Clear</button>
+      </div>
     </div>
+  </div>
+
+  <div class="section">
+    <h3>Recent Scan History</h3>
+    <div id="historyList"></div>
+  </div>
+
+  <div class="section">
+    <h3>Saved Deals</h3>
+    <div id="savedDealsList"></div>
   </div>
 
   <script>
@@ -157,38 +247,37 @@
       window.location.href = "barcode-scanner.html";
     }
 
-    window.onload = function () {
-      const scannedBarcode = localStorage.getItem("scannedBarcode");
-      const scannedPrice = localStorage.getItem("scannedPrice");
-      const scannedName = localStorage.getItem("scannedName");
-
-      if (scannedBarcode) {
-        document.getElementById("barcode").value = scannedBarcode;
-        localStorage.removeItem("scannedBarcode");
+    function pasteAmazonLink() {
+      const link = prompt("Paste Amazon product link:");
+      if (link) {
+        alert("Link saved for future Amazon lookup.");
       }
+    }
 
-      if (scannedPrice) {
-        document.getElementById("amazon").value = scannedPrice;
-        localStorage.removeItem("scannedPrice");
+    function calculateIfReady() {
+      const buy = document.getElementById("buy").value;
+      const amazon = document.getElementById("amazon").value;
+      if (buy && amazon) {
+        calculate();
       }
-
-      if (scannedName) {
-        document.getElementById("productName").value = scannedName;
-        localStorage.removeItem("scannedName");
-      }
-    };
+    }
 
     function calculate() {
       const buy = parseFloat(document.getElementById("buy").value);
       const amazon = parseFloat(document.getElementById("amazon").value);
+      const vatOn = document.getElementById("vatToggle").checked;
 
       if (!buy || !amazon) return;
 
       const fee = amazon * 0.15;
-      const profit = amazon - fee - buy;
+      const vat = vatOn ? amazon * 0.20 : 0;
+      const profit = amazon - fee - vat - buy;
       const roi = ((profit / buy) * 100).toFixed(1);
 
       document.getElementById("fee").innerText = "Amazon Fee: £" + fee.toFixed(2);
+      document.getElementById("vatLine").innerText = vatOn
+        ? "VAT Estimate: £" + vat.toFixed(2)
+        : "VAT Estimate: Off";
       document.getElementById("profit").innerText = "Profit: £" + profit.toFixed(2);
       document.getElementById("roi").innerText = "ROI: " + roi + "%";
 
@@ -213,12 +302,134 @@
       resultBox.style.background = color;
     }
 
-    function pasteAmazonLink() {
-      const link = prompt("Paste Amazon product link:");
-      if (link) {
-        alert("Link saved for future Amazon lookup.");
-      }
+    function clearForm() {
+      document.getElementById("productName").value = "";
+      document.getElementById("barcode").value = "";
+      document.getElementById("buy").value = "";
+      document.getElementById("amazon").value = "";
+      document.getElementById("vatToggle").checked = false;
+      document.getElementById("result").style.display = "none";
+      document.getElementById("scanMessage").style.display = "none";
     }
+
+    function saveDeal() {
+      const productName = document.getElementById("productName").value || "Unknown Product";
+      const barcode = document.getElementById("barcode").value || "No barcode";
+      const buy = document.getElementById("buy").value || "0";
+      const amazon = document.getElementById("amazon").value || "0";
+      const profitText = document.getElementById("profit").innerText || "Profit: £0.00";
+      const roiText = document.getElementById("roi").innerText || "ROI: 0%";
+      const verdict = document.getElementById("verdict").innerText || "";
+
+      const savedDeals = JSON.parse(localStorage.getItem("savedDeals") || "[]");
+
+      savedDeals.unshift({
+        productName,
+        barcode,
+        buy,
+        amazon,
+        profitText,
+        roiText,
+        verdict
+      });
+
+      localStorage.setItem("savedDeals", JSON.stringify(savedDeals.slice(0, 20)));
+      renderSavedDeals();
+      alert("Deal saved");
+    }
+
+    function renderHistory() {
+      const historyList = document.getElementById("historyList");
+      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
+
+      if (history.length === 0) {
+        historyList.innerHTML = '<div class="empty">No scans yet.</div>';
+        return;
+      }
+
+      historyList.innerHTML = history.map(item => `
+        <div class="history-item">
+          <div class="item-title">${item.productName}</div>
+          <div class="muted">Barcode: ${item.barcode}</div>
+          <div class="muted">Amazon Price: £${item.amazon}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderSavedDeals() {
+      const savedDealsList = document.getElementById("savedDealsList");
+      const savedDeals = JSON.parse(localStorage.getItem("savedDeals") || "[]");
+
+      if (savedDeals.length === 0) {
+        savedDealsList.innerHTML = '<div class="empty">No saved deals yet.</div>';
+        return;
+      }
+
+      savedDealsList.innerHTML = savedDeals.map(item => `
+        <div class="saved-item">
+          <div class="item-title">${item.productName}</div>
+          <div class="muted">Barcode: ${item.barcode}</div>
+          <div class="muted">Buy: £${item.buy} | Amazon: £${item.amazon}</div>
+          <div class="muted">${item.profitText} | ${item.roiText}</div>
+          <div class="muted">${item.verdict}</div>
+        </div>
+      `).join("");
+    }
+
+    function addToHistory(productName, barcode, amazon) {
+      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
+
+      history.unshift({
+        productName,
+        barcode,
+        amazon
+      });
+
+      localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 10)));
+    }
+
+    window.onload = function () {
+      const scannedBarcode = localStorage.getItem("scannedBarcode");
+      const scannedPrice = localStorage.getItem("scannedPrice");
+      const scannedName = localStorage.getItem("scannedName");
+
+      if (scannedBarcode) {
+        document.getElementById("barcode").value = scannedBarcode;
+        localStorage.removeItem("scannedBarcode");
+      }
+
+      if (scannedPrice) {
+        document.getElementById("amazon").value = scannedPrice;
+        localStorage.removeItem("scannedPrice");
+      }
+
+      if (scannedName) {
+        document.getElementById("productName").value = scannedName;
+        localStorage.removeItem("scannedName");
+      }
+
+      if (scannedBarcode || scannedPrice || scannedName) {
+        document.getElementById("scanMessage").style.display = "block";
+
+        if (navigator.vibrate) {
+          navigator.vibrate(200);
+        }
+
+        const productName = document.getElementById("productName").value || "Unknown Product";
+        const barcode = document.getElementById("barcode").value || "";
+        const amazon = document.getElementById("amazon").value || "0";
+        addToHistory(productName, barcode, amazon);
+
+        setTimeout(() => {
+          document.getElementById("scanMessage").style.display = "none";
+        }, 2500);
+
+        calculateIfReady();
+      }
+
+      renderHistory();
+      renderSavedDeals();
+    };
   </script>
 
 </body>
