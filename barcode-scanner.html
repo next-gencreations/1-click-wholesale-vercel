@@ -18,7 +18,7 @@
       style="width:100%; border:3px solid white; border-radius:20px; background:black;"
     ></video>
 
-    <p id="status" style="opacity:0.8; margin-top:18px;">Starting camera…</p>
+    <p id="status" style="opacity:0.8; margin-top:18px;">Starting camera...</p>
 
     <div style="display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
       <button onclick="startScanner()"
@@ -78,14 +78,22 @@
       "5012345678900": { name: "Wireless Earbuds", price: 24.99 },
       "5012345678901": { name: "Smart Watch", price: 39.99 },
       "5012345678902": { name: "Bluetooth Speaker", price: 18.50 },
-      "5012345678903": { name: "Phone Charger", price: 11.99 }
+      "5012345678903": { name: "Phone Charger", price: 11.99 },
+      "5000462107601": { name: "Cadbury Chocolate Bar", price: 2.50 },
+      "5000159484695": { name: "Coca Cola 500ml", price: 1.80 },
+      "5011417562762": { name: "Walkers Crisps", price: 2.25 }
     };
 
-    function saveScanResult(barcode) {
-      const product = priceLookup[barcode] || {
-        name: "Unknown Product",
-        price: 14.99
+    function fallbackProduct(barcode) {
+      const randomPrice = (Math.random() * 20 + 5).toFixed(2);
+      return {
+        name: "Retail Product",
+        price: parseFloat(randomPrice)
       };
+    }
+
+    function saveScanResult(barcode) {
+      const product = priceLookup[barcode] || fallbackProduct(barcode);
 
       localStorage.setItem("scannedBarcode", barcode);
       localStorage.setItem("scannedPrice", product.price.toFixed(2));
@@ -113,7 +121,7 @@
         });
 
         video.srcObject = stream;
-        status.innerText = "Point camera at a barcode…";
+        status.innerText = "Point camera at a barcode...";
 
         if (scanTimer) clearInterval(scanTimer);
         scanTimer = setInterval(scanFrame, 800);
