@@ -8,78 +8,83 @@
 </head>
 <body style="font-family: Arial, sans-serif; background:#111; color:white; text-align:center; padding:20px; margin:0;">
 
-  <h2 style="margin-top:20px;">📷 Scan Barcode</h2>
+  <div style="max-width:380px; margin:0 auto;">
+    <h2 style="margin-top:10px; margin-bottom:10px;">📷 Scan Barcode</h2>
+    <p style="opacity:0.8; margin-top:0;">Point your camera at a product barcode</p>
 
-  <div style="max-width:360px; margin:0 auto;">
-    <div id="reader" style="width:100%; min-height:260px; border:4px solid white; border-radius:20px; overflow:hidden; background:black;"></div>
+    <div
+      id="reader"
+      style="width:100%; min-height:260px; border:4px solid white; border-radius:22px; overflow:hidden; background:black; box-shadow:0 8px 24px rgba(0,0,0,0.35);"
+    ></div>
+
+    <div
+      id="scanSuccess"
+      style="display:none; margin-top:14px; padding:12px; border-radius:12px; background:#1b5e20; color:white; font-weight:700;"
+    >
+      ✅ Barcode scanned successfully
+    </div>
 
     <p id="status" style="opacity:0.85; margin-top:18px;">Tap Start to begin scanning...</p>
 
     <div style="display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
       <button onclick="startScanner()"
-        style="padding:12px 16px; background:#4CAF50; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
+        style="padding:12px 16px; background:#4CAF50; border:none; border-radius:12px; color:white; font-size:16px; cursor:pointer; font-weight:600;">
         ▶ Start
       </button>
 
       <button onclick="stopScanner()"
-        style="padding:12px 16px; background:#666; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
+        style="padding:12px 16px; background:#666; border:none; border-radius:12px; color:white; font-size:16px; cursor:pointer; font-weight:600;">
         ⏸ Stop
       </button>
 
-      <button onclick="document.getElementById('cameraFile').click()"
-        style="padding:12px 16px; background:#ff9800; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
-        📸 Use Phone Camera
+      <button onclick="toggleTorch()"
+        style="padding:12px 16px; background:#ff9800; border:none; border-radius:12px; color:white; font-size:16px; cursor:pointer; font-weight:600;">
+        🔦 Torch
       </button>
 
       <button onclick="showDemoOptions()"
-        style="padding:12px 16px; background:#2196F3; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
+        style="padding:12px 16px; background:#2196F3; border:none; border-radius:12px; color:white; font-size:16px; cursor:pointer; font-weight:600;">
         📦 Demo Scan
       </button>
     </div>
 
-    <input
-      id="cameraFile"
-      type="file"
-      accept="image/*"
-      capture="environment"
-      style="display:none;"
-    />
-
-    <div id="demoPanel" style="display:none; margin-top:18px; background:#1d1d1d; border-radius:14px; padding:14px;">
-      <p style="margin-top:0;">Choose a sample product</p>
+    <div id="demoPanel" style="display:none; margin-top:18px; background:#1d1d1d; border-radius:16px; padding:14px;">
+      <p style="margin-top:0; font-weight:700;">Choose a sample product</p>
 
       <button onclick="useDemoScan('5012345678900')"
-        style="display:block; width:100%; margin-bottom:8px; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        style="display:block; width:100%; margin-bottom:8px; padding:11px; border:none; border-radius:10px; background:#2e7d32; color:white; font-weight:600;">
         Wireless Earbuds — £24.99
       </button>
 
       <button onclick="useDemoScan('5012345678901')"
-        style="display:block; width:100%; margin-bottom:8px; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        style="display:block; width:100%; margin-bottom:8px; padding:11px; border:none; border-radius:10px; background:#2e7d32; color:white; font-weight:600;">
         Smart Watch — £39.99
       </button>
 
       <button onclick="useDemoScan('5012345678902')"
-        style="display:block; width:100%; margin-bottom:8px; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        style="display:block; width:100%; margin-bottom:8px; padding:11px; border:none; border-radius:10px; background:#2e7d32; color:white; font-weight:600;">
         Bluetooth Speaker — £18.50
       </button>
 
       <button onclick="useDemoScan('5012345678903')"
-        style="display:block; width:100%; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        style="display:block; width:100%; padding:11px; border:none; border-radius:10px; background:#2e7d32; color:white; font-weight:600;">
         Phone Charger — £11.99
       </button>
     </div>
 
-    <br>
-
-    <button onclick="goBack()"
-      style="padding:10px 15px; background:#888; border:none; border-radius:10px; color:white; cursor:pointer;">
-      ← Back
-    </button>
+    <div style="margin-top:18px;">
+      <button onclick="goBack()"
+        style="padding:11px 16px; background:#888; border:none; border-radius:12px; color:white; cursor:pointer; font-weight:600;">
+        ← Back
+      </button>
+    </div>
   </div>
 
   <script>
     let html5QrCode = null;
     let scannerRunning = false;
+    let lastScannedCode = null;
+    let torchOn = false;
 
     const priceLookup = {
       "5012345678900": { name: "Wireless Earbuds", price: 24.99 },
@@ -99,11 +104,47 @@
       };
     }
 
+    function playBeep() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.12);
+      } catch (e) {}
+    }
+
+    function showSuccess(message) {
+      const box = document.getElementById("scanSuccess");
+      box.innerText = message || "✅ Barcode scanned successfully";
+      box.style.display = "block";
+
+      if (navigator.vibrate) {
+        navigator.vibrate([120, 60, 120]);
+      }
+
+      playBeep();
+
+      setTimeout(() => {
+        box.style.display = "none";
+      }, 1800);
+    }
+
     function saveScanResult(barcode) {
       const product = priceLookup[barcode] || fallbackProduct(barcode);
+
       localStorage.setItem("scannedBarcode", barcode);
       localStorage.setItem("scannedPrice", product.price.toFixed(2));
       localStorage.setItem("scannedName", product.name);
+
       window.location.href = "index.html";
     }
 
@@ -121,7 +162,12 @@
           { facingMode: "environment" },
           { fps: 10, qrbox: 250 },
           (decodedText) => {
+            if (decodedText === lastScannedCode) return;
+            lastScannedCode = decodedText;
+
             status.innerText = "Scanned: " + decodedText;
+            showSuccess("✅ Scanned: " + decodedText);
+
             stopScanner().then(() => saveScanResult(decodedText));
           },
           () => {}
@@ -130,7 +176,7 @@
         scannerRunning = true;
         status.innerText = "Point the camera at a barcode...";
       } catch (err) {
-        status.innerText = "Live scanner failed. Try 'Use Phone Camera' or Demo Scan.";
+        status.innerText = "Live scanner failed. Use Demo Scan below.";
       }
     }
 
@@ -141,24 +187,60 @@
           await html5QrCode.clear();
         } catch (e) {}
         scannerRunning = false;
+        torchOn = false;
       }
     }
 
-    async function scanImageFile(file) {
+    async function toggleTorch() {
       const status = document.getElementById("status");
 
+      if (!html5QrCode || !scannerRunning) {
+        status.innerText = "Start scanner first to use torch.";
+        return;
+      }
+
       try {
-        if (!html5QrCode) {
-          html5QrCode = new Html5Qrcode("reader");
+        const track = html5QrCode.getRunningTrackSettings ? null : null;
+        const videoTrack = html5QrCode.getState ? null : null;
+
+        const internalTrack =
+          html5QrCode.getRunningTrackCameraCapabilities &&
+          html5QrCode.getRunningTrackCameraCapabilities();
+
+        const runningTrack =
+          html5QrCode.getRunningTrackCapabilities &&
+          html5QrCode.getRunningTrackCapabilities();
+
+        const mediaTrack =
+          html5QrCode.getRunningTrackSettings ||
+          html5QrCode.getRunningTrackCapabilities
+            ? null
+            : null;
+
+        const scanner = html5QrCode;
+        const realTrack = scanner && scanner._localMediaStream
+          ? scanner._localMediaStream.getVideoTracks()[0]
+          : null;
+
+        if (!realTrack) {
+          status.innerText = "Torch not available on this device/browser.";
+          return;
         }
 
-        status.innerText = "Scanning image...";
+        const capabilities = realTrack.getCapabilities ? realTrack.getCapabilities() : {};
+        if (!capabilities.torch) {
+          status.innerText = "Torch not supported on this device/browser.";
+          return;
+        }
 
-        const decodedText = await html5QrCode.scanFile(file, true);
-        status.innerText = "Scanned from image: " + decodedText;
-        saveScanResult(decodedText);
+        torchOn = !torchOn;
+        await realTrack.applyConstraints({
+          advanced: [{ torch: torchOn }]
+        });
+
+        status.innerText = torchOn ? "Torch on" : "Torch off";
       } catch (err) {
-        status.innerText = "Could not read barcode from photo. Try Demo Scan.";
+        status.innerText = "Torch unavailable on this device/browser.";
       }
     }
 
@@ -168,6 +250,7 @@
     }
 
     function useDemoScan(barcode) {
+      showSuccess("✅ Demo scan complete");
       stopScanner().then(() => saveScanResult(barcode));
     }
 
@@ -176,13 +259,6 @@
         window.location.href = "index.html";
       });
     }
-
-    document.getElementById("cameraFile").addEventListener("change", function (event) {
-      const file = event.target.files[0];
-      if (file) {
-        stopScanner().then(() => scanImageFile(file));
-      }
-    });
 
     window.addEventListener("beforeunload", () => {
       stopScanner();
