@@ -11,10 +11,20 @@
 
     <h2 style="text-align:center; margin-top:0; color:#24323D;">1-Click Profit Finder</h2>
 
+    <label style="display:block; margin-bottom:6px; color:#425564;">Scanned Barcode</label>
+    <input
+      id="barcode"
+      type="text"
+      placeholder="Will fill from scanner"
+      readonly
+      style="width:100%; padding:10px; margin-bottom:12px; border-radius:10px; border:1px solid #ccc; box-sizing:border-box; background:#f7f7f7;"
+    />
+
     <label style="display:block; margin-bottom:6px; color:#425564;">Buy Price (£)</label>
     <input
       id="buy"
       type="number"
+      step="0.01"
       placeholder="e.g. 5"
       style="width:100%; padding:10px; margin-bottom:12px; border-radius:10px; border:1px solid #ccc; box-sizing:border-box;"
     />
@@ -23,6 +33,7 @@
     <input
       id="amazon"
       type="number"
+      step="0.01"
       placeholder="e.g. 12"
       style="width:100%; padding:10px; margin-bottom:12px; border-radius:10px; border:1px solid #ccc; box-sizing:border-box;"
     />
@@ -64,10 +75,16 @@
 
   <script>
     window.onload = function () {
-      const scanned = localStorage.getItem("scannedPrice");
+      const scannedBarcode = localStorage.getItem("scannedBarcode");
+      const scannedPrice = localStorage.getItem("scannedPrice");
 
-      if (scanned) {
-        document.getElementById("amazon").value = scanned;
+      if (scannedBarcode) {
+        document.getElementById("barcode").value = scannedBarcode;
+        localStorage.removeItem("scannedBarcode");
+      }
+
+      if (scannedPrice) {
+        document.getElementById("amazon").value = scannedPrice;
         localStorage.removeItem("scannedPrice");
       }
     };
@@ -97,9 +114,8 @@
 
     function pasteAmazonLink() {
       const link = prompt("Paste Amazon product link:");
-
       if (link) {
-        alert("Nice — next step we auto-fill price from this 🔥");
+        alert("Link saved for future Amazon lookup.");
       }
     }
   </script>
