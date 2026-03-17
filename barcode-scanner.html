@@ -5,48 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scan Barcode</title>
 </head>
-
 <body style="font-family: Arial, sans-serif; background:#111; color:white; text-align:center; padding:20px; margin:0;">
 
   <h2 style="margin-top:20px;">📷 Scan Barcode</h2>
 
-  <div style="border:3px solid white; border-radius:20px; height:220px; margin:30px auto; max-width:300px; display:flex; align-items:center; justify-content:center;">
-    <span style="opacity:0.6;">Camera preview coming soon</span>
+  <div style="max-width:360px; margin:0 auto;">
+    <video
+      id="video"
+      autoplay
+      playsinline
+      muted
+      style="width:100%; border:3px solid white; border-radius:20px; background:black;"
+    ></video>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <p id="status" style="opacity:0.8; margin-top:18px;">Starting camera…</p>
+
+    <div style="display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
+      <button onclick="startScanner()"
+        style="padding:12px 16px; background:#4CAF50; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
+        ▶ Start
+      </button>
+
+      <button onclick="stopScanner()"
+        style="padding:12px 16px; background:#666; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
+        ⏸ Stop
+      </button>
+
+      <button onclick="fakeScan()"
+        style="padding:12px 16px; background:#2196F3; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
+        📦 Simulate Scan
+      </button>
+    </div>
+
+    <br>
+
+    <button onclick="goBack()"
+      style="padding:10px 15px; background:#888; border:none; border-radius:10px; color:white; cursor:pointer;">
+      ← Back
+    </button>
   </div>
 
-  <p style="opacity:0.8;">Tap below to simulate a scan</p>
-
-  <button onclick="fakeScan()" 
-    style="padding:15px 20px; background:#4CAF50; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer; margin-top:10px;">
-    📦 Simulate Scan
-  </button>
-
-  <br><br>
-
-  <button onclick="goBack()" 
-    style="padding:10px 15px; background:#666; border:none; border-radius:10px; color:white; cursor:pointer;">
-    ← Back
-  </button>
-
   <script>
+    let stream = null;
+    let scanTimer = null;
+    let detector = null;
+
+    async function startScanner() {
+      const status = document.getElementById("status");
+      const video = document.getElementById("video");
+
+      try {
+        if (!("BarcodeDetector" in window)) {
+          status.innerText = "Barcode scanner not supported on this browser. Use Simulate Scan for now.";
+          return;
+        }
+
+        detector = new BarcodeDetector({
+          formats: [
+            "ean_13",
+            "ean_8",
+            "upc_a",
+            "upc_e",
+            "code_128",
+            "code_39"
+          ]
+        });
+
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }
+        });
+
+        video.srcObject = stream;
+        status.innerText = "Point camera at a barcode…";
+
+        if (scanTimer) clearInterval(scanTimer);
+        scanTimer = setInterval(scanFrame, 800);
+
+      } catch (err) {
+        status.innerText = "Camera error: " + err.message;
+      }
+    }
+
+    async function scanFrame() {
+      const video = document.getElementById("video");
+      const status = document.getElementById("status");
+
+      if (!detector || video.readyState < 2) return;
+
+      try {
+        const barcodes = await detector.detect(video);
+
+        if (barcodes.length > 0) {
+          const code = barcodes[0].rawValue;
+          status.innerText = "Scanned: " + code;
+
+          // Demo price for now. Later this gets replaced by Amazon API/backend lookup.
+          const demoAmazonPrice = 12.99;
+
+          localStorage.setItem("scannedBarcode", code);
+          localStorage.setItem("scannedPrice", demoAmazonPrice);
+
+          stopScanner();
+          window.location.href = "index.html";
+        }
+      } catch (err) {
+        status.innerText = "Scanning error: " + err.message;
+      }
+    }
+
+    function stopScanner() {
+      if (scanTimer) {
+        clearInterval(scanTimer);
+        scanTimer = null;
+      }
+
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+    }
+
     function fakeScan() {
-      // Simulated barcode result
-      const fakeBarcode = "1234567890123";
-
-      // Simulated Amazon price
-      const fakePrice = 12.99;
-
-      // Save to localStorage
-      localStorage.setItem("scannedBarcode", fakeBarcode);
-      localStorage.setItem("scannedPrice", fakePrice);
-
-      // Go back to main page
+      localStorage.setItem("scannedBarcode", "1234567890123");
+      localStorage.setItem("scannedPrice", "12.99");
       window.location.href = "index.html";
     }
 
     function goBack() {
+      stopScanner();
       window.location.href = "index.html";
     }
+
+    window.addEventListener("beforeunload", stopScanner);
+    window.onload = startScanner;
   </script>
 
 </body>
