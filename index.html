@@ -1,41 +1,77 @@
-<body style="font-family: Arial; background:#EEF4F2; padding:20px;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1-Click Profit Finder</title>
+</head>
+<body style="font-family: Arial, sans-serif; background:#EEF4F2; padding:20px; margin:0;">
 
-  <div style="max-width:500px; margin:auto; background:white; padding:20px; border-radius:20px;">
+  <div style="max-width:500px; margin:40px auto; background:white; padding:20px; border-radius:20px; box-sizing:border-box;">
 
-    <h2 style="text-align:center;">1-Click Profit Finder</h2>
+    <h2 style="text-align:center; margin-top:0; color:#24323D;">1-Click Profit Finder</h2>
 
-    <label>Buy Price (£)</label>
-    <input id="buy" type="number" placeholder="e.g. 5" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #ccc;" />
+    <label style="display:block; margin-bottom:6px; color:#425564;">Buy Price (£)</label>
+    <input
+      id="buy"
+      type="number"
+      placeholder="e.g. 5"
+      style="width:100%; padding:10px; margin-bottom:12px; border-radius:10px; border:1px solid #ccc; box-sizing:border-box;"
+    />
 
-    <label>Amazon Price (£)</label>
-    <input id="amazon" type="number" placeholder="e.g. 12" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #ccc;" />
+    <label style="display:block; margin-bottom:6px; color:#425564;">Amazon Price (£)</label>
+    <input
+      id="amazon"
+      type="number"
+      placeholder="e.g. 12"
+      style="width:100%; padding:10px; margin-bottom:12px; border-radius:10px; border:1px solid #ccc; box-sizing:border-box;"
+    />
 
-    <button onclick="calculate()" style="width:100%; padding:12px; background:#5D8A7A; color:white; border:none; border-radius:10px;">
+    <button
+      onclick="calculate()"
+      style="width:100%; padding:12px; background:#5D8A7A; color:white; border:none; border-radius:10px; cursor:pointer;"
+    >
       Check Profit
     </button>
 
     <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
-      <button onclick="window.location.href='barcode-scanner.html'" 
-        style="flex:1; padding:12px; border-radius:10px; border:none; background:#4CAF50; color:white;">
+      <button
+        onclick="window.location.href='barcode-scanner.html'"
+        style="flex:1; padding:12px; border-radius:10px; border:none; background:#4CAF50; color:white; cursor:pointer;"
+      >
         📷 Scan Barcode
       </button>
 
-      <button onclick="pasteAmazonLink()" 
-        style="flex:1; padding:12px; border-radius:10px; border:none; background:#2196F3; color:white;">
+      <button
+        onclick="pasteAmazonLink()"
+        style="flex:1; padding:12px; border-radius:10px; border:none; background:#2196F3; color:white; cursor:pointer;"
+      >
         🔗 Paste Link
       </button>
     </div>
 
-    <div id="result" style="margin-top:20px; padding:15px; background:#EEF4F2; border-radius:10px; display:none;">
-      <p id="fee"></p>
-      <p id="profit"></p>
-      <p id="roi"></p>
-      <h3 id="verdict"></h3>
+    <div
+      id="result"
+      style="margin-top:20px; padding:15px; background:#EEF4F2; border-radius:10px; display:none;"
+    >
+      <p id="fee" style="margin:0 0 8px 0; color:#24323D; font-weight:600;"></p>
+      <p id="profit" style="margin:0 0 8px 0; color:#24323D; font-weight:600;"></p>
+      <p id="roi" style="margin:0 0 8px 0; color:#24323D; font-weight:600;"></p>
+      <h3 id="verdict" style="margin:10px 0 0 0; color:#24323D;"></h3>
     </div>
 
   </div>
 
   <script>
+    window.onload = function () {
+      const scanned = localStorage.getItem("scannedPrice");
+
+      if (scanned) {
+        document.getElementById("amazon").value = scanned;
+        localStorage.removeItem("scannedPrice");
+      }
+    };
+
     function calculate() {
       const buy = parseFloat(document.getElementById("buy").value);
       const amazon = parseFloat(document.getElementById("amazon").value);
@@ -60,7 +96,7 @@
     }
 
     function pasteAmazonLink() {
-      let link = prompt("Paste Amazon product link:");
+      const link = prompt("Paste Amazon product link:");
 
       if (link) {
         alert("Nice — next step we auto-fill price from this 🔥");
@@ -69,3 +105,4 @@
   </script>
 
 </body>
+</html>
