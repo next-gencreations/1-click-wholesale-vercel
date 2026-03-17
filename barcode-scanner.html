@@ -4,19 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scan Barcode</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body style="font-family: Arial, sans-serif; background:#111; color:white; text-align:center; padding:20px; margin:0;">
 
   <h2 style="margin-top:20px;">📷 Scan Barcode</h2>
 
   <div style="max-width:360px; margin:0 auto;">
-    <video
-      id="video"
-      autoplay
-      playsinline
-      muted
-      style="width:100%; border:4px solid white; border-radius:20px; background:black;"
-    ></video>
+    <div id="reader" style="width:100%; border:4px solid white; border-radius:20px; overflow:hidden; background:black;"></div>
 
     <p id="status" style="opacity:0.85; margin-top:18px;">Tap Start to begin scanning...</p>
 
@@ -70,10 +65,8 @@
   </div>
 
   <script>
-    let stream = null;
-    let scanTimer = null;
-    let detector = null;
-    let isStarting = false;
+    let html5QrCode = null;
+    let scannerRunning = false;
 
     const priceLookup = {
       "5012345678900": { name: "Wireless Earbuds", price: 24.99 },
@@ -95,88 +88,46 @@
 
     function saveScanResult(barcode) {
       const product = priceLookup[barcode] || fallbackProduct(barcode);
-
       localStorage.setItem("scannedBarcode", barcode);
       localStorage.setItem("scannedPrice", product.price.toFixed(2));
       localStorage.setItem("scannedName", product.name);
-
       window.location.href = "index.html";
     }
 
     async function startScanner() {
       const status = document.getElementById("status");
-      const video = document.getElementById("video");
-
-      if (isStarting) return;
-      isStarting = true;
 
       try {
-        stopScanner();
-
-        if (!("BarcodeDetector" in window)) {
-          status.innerText = "This browser does not support live barcode scanning. Use Demo Scan below.";
-          isStarting = false;
-          return;
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("reader");
         }
 
-        detector = new BarcodeDetector({
-          formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"]
-        });
+        if (scannerRunning) return;
 
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: { ideal: "environment" }
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          (decodedText) => {
+            status.innerText = "Scanned: " + decodedText;
+            stopScanner().then(() => saveScanResult(decodedText));
           },
-          audio: false
-        });
+          () => {}
+        );
 
-        video.srcObject = stream;
-        await video.play();
-
+        scannerRunning = true;
         status.innerText = "Point the camera at a barcode...";
-        scanTimer = setInterval(scanFrame, 500);
       } catch (err) {
-        status.innerText = "Camera error: " + err.message;
-      } finally {
-        isStarting = false;
+        status.innerText = "Camera/scanner error: " + err;
       }
     }
 
-    async function scanFrame() {
-      const video = document.getElementById("video");
-      const status = document.getElementById("status");
-
-      if (!detector || !video || video.readyState < 2) return;
-
-      try {
-        const barcodes = await detector.detect(video);
-
-        if (barcodes.length > 0) {
-          const code = barcodes[0].rawValue;
-          status.innerText = "Scanned: " + code;
-          stopScanner();
-          saveScanResult(code);
-        }
-      } catch (err) {
-        status.innerText = "Scanning error: " + err.message;
-      }
-    }
-
-    function stopScanner() {
-      if (scanTimer) {
-        clearInterval(scanTimer);
-        scanTimer = null;
-      }
-
-      const video = document.getElementById("video");
-      if (video) {
-        video.pause();
-        video.srcObject = null;
-      }
-
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
+    async function stopScanner() {
+      if (html5QrCode && scannerRunning) {
+        try {
+          await html5QrCode.stop();
+          await html5QrCode.clear();
+        } catch (e) {}
+        scannerRunning = false;
       }
     }
 
@@ -186,16 +137,18 @@
     }
 
     function useDemoScan(barcode) {
-      stopScanner();
-      saveScanResult(barcode);
+      stopScanner().then(() => saveScanResult(barcode));
     }
 
     function goBack() {
-      stopScanner();
-      window.location.href = "index.html";
+      stopScanner().then(() => {
+        window.location.href = "index.html";
+      });
     }
 
-    window.addEventListener("beforeunload", stopScanner);
+    window.addEventListener("beforeunload", () => {
+      stopScanner();
+    });
   </script>
 
 </body>
