@@ -1,29 +1,53 @@
-<body style="font-family: Arial; background:#111; color:white; text-align:center; padding:20px;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scan Barcode</title>
+</head>
 
-  <h2>📷 Scan Barcode</h2>
+<body style="font-family: Arial, sans-serif; background:#111; color:white; text-align:center; padding:20px; margin:0;">
 
-  <div style="border:3px solid white; border-radius:20px; height:200px; margin:30px auto; max-width:300px;">
+  <h2 style="margin-top:20px;">📷 Scan Barcode</h2>
+
+  <div style="border:3px solid white; border-radius:20px; height:220px; margin:30px auto; max-width:300px; display:flex; align-items:center; justify-content:center;">
+    <span style="opacity:0.6;">Camera preview coming soon</span>
   </div>
 
-  <p>Tap below to simulate scan</p>
+  <p style="opacity:0.8;">Tap below to simulate a scan</p>
 
   <button onclick="fakeScan()" 
-    style="padding:15px; background:#4CAF50; border:none; border-radius:10px; color:white; font-size:16px;">
-    Simulate Scan
+    style="padding:15px 20px; background:#4CAF50; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer; margin-top:10px;">
+    📦 Simulate Scan
+  </button>
+
+  <br><br>
+
+  <button onclick="goBack()" 
+    style="padding:10px 15px; background:#666; border:none; border-radius:10px; color:white; cursor:pointer;">
+    ← Back
   </button>
 
   <script>
     function fakeScan() {
-      // fake barcode + price
-      const barcode = "123456789";
-      const price = 12.99;
+      // Simulated barcode result
+      const fakeBarcode = "1234567890123";
 
-      // save data
-      localStorage.setItem("scannedPrice", price);
+      // Simulated Amazon price
+      const fakePrice = 12.99;
 
-      // go back to main page
+      // Save to localStorage
+      localStorage.setItem("scannedBarcode", fakeBarcode);
+      localStorage.setItem("scannedPrice", fakePrice);
+
+      // Go back to main page
+      window.location.href = "index.html";
+    }
+
+    function goBack() {
       window.location.href = "index.html";
     }
   </script>
 
 </body>
+</html>
