@@ -86,7 +86,7 @@
     let lastScannedCode = null;
     let torchOn = false;
 
-    const priceLookup = {
+    const localPriceLookup = {
       "5012345678900": { name: "Wireless Earbuds", price: 24.99 },
       "5012345678901": { name: "Smart Watch", price: 39.99 },
       "5012345678902": { name: "Bluetooth Speaker", price: 18.50 },
@@ -138,12 +138,35 @@
       }, 1800);
     }
 
-    function saveScanResult(barcode) {
-      const product = priceLookup[barcode] || fallbackProduct(barcode);
+    async function saveScanResult(barcode) {
+      let productName = "Retail Product";
+      let price = null;
+
+      try {
+        const response = await fetch(
+          "https://world.openfoodfacts.org/api/v0/product/" + barcode + ".json"
+        );
+        const data = await response.json();
+
+        if (data.status === 1) {
+          productName = data.product.product_name || "Retail Product";
+        }
+      } catch (e) {
+        console.log("OpenFoodFacts lookup failed");
+      }
+
+      if (localPriceLookup[barcode]) {
+        productName = localPriceLookup[barcode].name;
+        price = localPriceLookup[barcode].price;
+      }
+
+      if (!price) {
+        price = fallbackProduct(barcode).price;
+      }
 
       localStorage.setItem("scannedBarcode", barcode);
-      localStorage.setItem("scannedPrice", product.price.toFixed(2));
-      localStorage.setItem("scannedName", product.name);
+      localStorage.setItem("scannedPrice", Number(price).toFixed(2));
+      localStorage.setItem("scannedName", productName);
 
       window.location.href = "index.html";
     }
@@ -200,26 +223,8 @@
       }
 
       try {
-        const track = html5QrCode.getRunningTrackSettings ? null : null;
-        const videoTrack = html5QrCode.getState ? null : null;
-
-        const internalTrack =
-          html5QrCode.getRunningTrackCameraCapabilities &&
-          html5QrCode.getRunningTrackCameraCapabilities();
-
-        const runningTrack =
-          html5QrCode.getRunningTrackCapabilities &&
-          html5QrCode.getRunningTrackCapabilities();
-
-        const mediaTrack =
-          html5QrCode.getRunningTrackSettings ||
-          html5QrCode.getRunningTrackCapabilities
-            ? null
-            : null;
-
-        const scanner = html5QrCode;
-        const realTrack = scanner && scanner._localMediaStream
-          ? scanner._localMediaStream.getVideoTracks()[0]
+        const realTrack = html5QrCode && html5QrCode._localMediaStream
+          ? html5QrCode._localMediaStream.getVideoTracks()[0]
           : null;
 
         if (!realTrack) {
