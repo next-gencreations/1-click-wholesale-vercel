@@ -11,6 +11,15 @@
 
     <h2 style="text-align:center; margin-top:0; color:#24323D;">1-Click Profit Finder</h2>
 
+    <label style="display:block; margin-bottom:6px; color:#425564;">Product</label>
+    <input
+      id="productName"
+      type="text"
+      placeholder="Will fill from scanner"
+      readonly
+      style="width:100%; padding:10px; margin-bottom:12px; border-radius:10px; border:1px solid #ccc; box-sizing:border-box; background:#f7f7f7;"
+    />
+
     <label style="display:block; margin-bottom:6px; color:#425564;">Scanned Barcode</label>
     <input
       id="barcode"
@@ -77,6 +86,7 @@
     window.onload = function () {
       const scannedBarcode = localStorage.getItem("scannedBarcode");
       const scannedPrice = localStorage.getItem("scannedPrice");
+      const scannedName = localStorage.getItem("scannedName");
 
       if (scannedBarcode) {
         document.getElementById("barcode").value = scannedBarcode;
@@ -86,6 +96,11 @@
       if (scannedPrice) {
         document.getElementById("amazon").value = scannedPrice;
         localStorage.removeItem("scannedPrice");
+      }
+
+      if (scannedName) {
+        document.getElementById("productName").value = scannedName;
+        localStorage.removeItem("scannedName");
       }
     };
 
