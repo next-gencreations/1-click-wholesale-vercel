@@ -18,8 +18,6 @@
       style="width:100%; border:3px solid white; border-radius:20px; background:black;"
     ></video>
 
-    <canvas id="canvas" style="display:none;"></canvas>
-
     <p id="status" style="opacity:0.8; margin-top:18px;">Starting camera…</p>
 
     <div style="display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
@@ -33,9 +31,33 @@
         ⏸ Stop
       </button>
 
-      <button onclick="fakeScan()"
+      <button onclick="showDemoOptions()"
         style="padding:12px 16px; background:#2196F3; border:none; border-radius:10px; color:white; font-size:16px; cursor:pointer;">
-        📦 Simulate Scan
+        📦 Demo Scan
+      </button>
+    </div>
+
+    <div id="demoPanel" style="display:none; margin-top:18px; background:#1d1d1d; border-radius:14px; padding:14px;">
+      <p style="margin-top:0;">Choose a sample product</p>
+
+      <button onclick="useDemoScan('5012345678900')"
+        style="display:block; width:100%; margin-bottom:8px; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        Wireless Earbuds — £24.99
+      </button>
+
+      <button onclick="useDemoScan('5012345678901')"
+        style="display:block; width:100%; margin-bottom:8px; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        Smart Watch — £39.99
+      </button>
+
+      <button onclick="useDemoScan('5012345678902')"
+        style="display:block; width:100%; margin-bottom:8px; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        Bluetooth Speaker — £18.50
+      </button>
+
+      <button onclick="useDemoScan('5012345678903')"
+        style="display:block; width:100%; padding:10px; border:none; border-radius:10px; background:#2e7d32; color:white;">
+        Phone Charger — £11.99
       </button>
     </div>
 
@@ -52,25 +74,38 @@
     let scanTimer = null;
     let detector = null;
 
+    const priceLookup = {
+      "5012345678900": { name: "Wireless Earbuds", price: 24.99 },
+      "5012345678901": { name: "Smart Watch", price: 39.99 },
+      "5012345678902": { name: "Bluetooth Speaker", price: 18.50 },
+      "5012345678903": { name: "Phone Charger", price: 11.99 }
+    };
+
+    function saveScanResult(barcode) {
+      const product = priceLookup[barcode] || {
+        name: "Unknown Product",
+        price: 14.99
+      };
+
+      localStorage.setItem("scannedBarcode", barcode);
+      localStorage.setItem("scannedPrice", product.price.toFixed(2));
+      localStorage.setItem("scannedName", product.name);
+
+      window.location.href = "index.html";
+    }
+
     async function startScanner() {
       const status = document.getElementById("status");
       const video = document.getElementById("video");
 
       try {
         if (!("BarcodeDetector" in window)) {
-          status.innerText = "Barcode scanner not supported on this browser. Use Simulate Scan for now.";
+          status.innerText = "Barcode scanner not supported on this browser. Use Demo Scan below.";
           return;
         }
 
         detector = new BarcodeDetector({
-          formats: [
-            "ean_13",
-            "ean_8",
-            "upc_a",
-            "upc_e",
-            "code_128",
-            "code_39"
-          ]
+          formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"]
         });
 
         stream = await navigator.mediaDevices.getUserMedia({
@@ -100,15 +135,8 @@
         if (barcodes.length > 0) {
           const code = barcodes[0].rawValue;
           status.innerText = "Scanned: " + code;
-
-          // Demo price for now. Later this gets replaced by Amazon API/backend lookup.
-          const demoAmazonPrice = 12.99;
-
-          localStorage.setItem("scannedBarcode", code);
-          localStorage.setItem("scannedPrice", demoAmazonPrice);
-
           stopScanner();
-          window.location.href = "index.html";
+          saveScanResult(code);
         }
       } catch (err) {
         status.innerText = "Scanning error: " + err.message;
@@ -127,10 +155,14 @@
       }
     }
 
-    function fakeScan() {
-      localStorage.setItem("scannedBarcode", "1234567890123");
-      localStorage.setItem("scannedPrice", "12.99");
-      window.location.href = "index.html";
+    function showDemoOptions() {
+      const panel = document.getElementById("demoPanel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+
+    function useDemoScan(barcode) {
+      stopScanner();
+      saveScanResult(barcode);
     }
 
     function goBack() {
@@ -139,7 +171,6 @@
     }
 
     window.addEventListener("beforeunload", stopScanner);
-    window.onload = startScanner;
   </script>
 
 </body>
