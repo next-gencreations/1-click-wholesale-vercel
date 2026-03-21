@@ -15,7 +15,7 @@
 
     .card {
       max-width: 520px;
-      margin: 30px auto;
+      margin: 24px auto;
       background: white;
       padding: 22px;
       border-radius: 22px;
@@ -23,8 +23,14 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
-    h2, h3 {
+    h1, h2, h3 {
       margin-top: 0;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 18px;
     }
 
     label {
@@ -32,32 +38,60 @@
       margin: 12px 0 6px;
       color: #425564;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 4px;
-      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 6px;
+      border-radius: 14px;
       border: 1px solid #cfcfcf;
       box-sizing: border-box;
       font-size: 16px;
+      background: #fff;
     }
 
     .readonly {
       background: #f7f7f7;
     }
 
-    .main-btn, .scan-btn, .link-btn, .save-btn, .clear-btn {
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      background: #F7FAF9;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .switch-row label {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.3;
+      max-width: 75%;
+    }
+
+    .switch-row input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      margin: 0;
+    }
+
+    .main-btn,
+    .scan-btn,
+    .link-btn,
+    .save-btn,
+    .clear-btn {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       color: white;
       cursor: pointer;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .main-btn { background: #5D8A7A; }
@@ -66,10 +100,16 @@
     .save-btn { background: #FF9800; }
     .clear-btn { background: #777; }
 
-    .button-row {
-      margin-top: 15px;
+    .button-row,
+    .footer-actions {
+      margin-top: 14px;
       display: flex;
       gap: 10px;
+    }
+
+    .button-row button,
+    .footer-actions button {
+      flex: 1;
     }
 
     .message {
@@ -79,21 +119,32 @@
       background: #E8F5E9;
       color: #2e7d32;
       display: none;
-      font-weight: 600;
+      font-weight: 700;
+      text-align: center;
     }
 
     #result {
       margin-top: 20px;
-      padding: 16px;
-      border-radius: 14px;
+      padding: 18px;
+      border-radius: 16px;
       display: none;
       background: #EEF4F2;
     }
 
+    .deal-banner {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      color: white;
+    }
+
     .result-line {
-      margin: 0 0 8px 0;
+      margin: 0 0 10px 0;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 20px;
     }
 
     .small-line {
@@ -103,14 +154,12 @@
     }
 
     .section {
-      margin-top: 24px;
+      margin: 22px auto 0;
       background: #ffffff;
       border-radius: 18px;
       padding: 18px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.05);
       max-width: 520px;
-      margin-left: auto;
-      margin-right: auto;
       box-sizing: border-box;
     }
 
@@ -123,43 +172,20 @@
     }
 
     .item-title {
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 4px;
+      font-size: 18px;
     }
 
     .muted {
       color: #5f6f79;
       font-size: 14px;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .empty {
       color: #7b8a93;
       margin-top: 10px;
-    }
-
-    .switch-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 14px;
-      background: #F7FAF9;
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .switch-row label {
-      margin: 0;
-    }
-
-    .footer-actions {
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-    }
-
-    .footer-actions button {
-      flex: 1;
     }
   </style>
 </head>
@@ -219,6 +245,8 @@
     <div id="scanMessage" class="message">✅ Product scanned successfully</div>
 
     <div id="result">
+      <div id="dealBanner" class="deal-banner">GOOD DEAL</div>
+
       <p id="fee" class="small-line"></p>
       <p id="vatLine" class="small-line"></p>
       <p id="profit" class="result-line"></p>
@@ -282,155 +310,28 @@
       document.getElementById("roi").innerText = "ROI: " + roi + "%";
 
       let verdict = "";
-      let color = "";
+      let cardColor = "";
+      let bannerText = "";
+      let bannerColor = "";
 
-      if (roi > 40) {
+      if (roi >= 40 && profit > 0) {
         verdict = "🔥 Great opportunity";
-        color = "#C8E6C9";
-      } else if (roi > 20) {
+        cardColor = "#C8E6C9";
+        bannerText = "BUY";
+        bannerColor = "#2E7D32";
+      } else if (roi >= 20 && profit > 0) {
         verdict = "👍 Worth a look";
-        color = "#FFF3CD";
+        cardColor = "#FFF3CD";
+        bannerText = "MAYBE";
+        bannerColor = "#F9A825";
       } else {
         verdict = "❌ Probably skip";
-        color = "#FFCDD2";
+        cardColor = "#FFCDD2";
+        bannerText = "SKIP";
+        bannerColor = "#C62828";
       }
 
       document.getElementById("verdict").innerText = verdict;
 
       const resultBox = document.getElementById("result");
-      resultBox.style.display = "block";
-      resultBox.style.background = color;
-    }
-
-    function clearForm() {
-      document.getElementById("productName").value = "";
-      document.getElementById("barcode").value = "";
-      document.getElementById("buy").value = "";
-      document.getElementById("amazon").value = "";
-      document.getElementById("vatToggle").checked = false;
-      document.getElementById("result").style.display = "none";
-      document.getElementById("scanMessage").style.display = "none";
-    }
-
-    function saveDeal() {
-      const productName = document.getElementById("productName").value || "Unknown Product";
-      const barcode = document.getElementById("barcode").value || "No barcode";
-      const buy = document.getElementById("buy").value || "0";
-      const amazon = document.getElementById("amazon").value || "0";
-      const profitText = document.getElementById("profit").innerText || "Profit: £0.00";
-      const roiText = document.getElementById("roi").innerText || "ROI: 0%";
-      const verdict = document.getElementById("verdict").innerText || "";
-
-      const savedDeals = JSON.parse(localStorage.getItem("savedDeals") || "[]");
-
-      savedDeals.unshift({
-        productName,
-        barcode,
-        buy,
-        amazon,
-        profitText,
-        roiText,
-        verdict
-      });
-
-      localStorage.setItem("savedDeals", JSON.stringify(savedDeals.slice(0, 20)));
-      renderSavedDeals();
-      alert("Deal saved");
-    }
-
-    function renderHistory() {
-      const historyList = document.getElementById("historyList");
-      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
-
-      if (history.length === 0) {
-        historyList.innerHTML = '<div class="empty">No scans yet.</div>';
-        return;
-      }
-
-      historyList.innerHTML = history.map(item => `
-        <div class="history-item">
-          <div class="item-title">${item.productName}</div>
-          <div class="muted">Barcode: ${item.barcode}</div>
-          <div class="muted">Amazon Price: £${item.amazon}</div>
-        </div>
-      `).join("");
-    }
-
-    function renderSavedDeals() {
-      const savedDealsList = document.getElementById("savedDealsList");
-      const savedDeals = JSON.parse(localStorage.getItem("savedDeals") || "[]");
-
-      if (savedDeals.length === 0) {
-        savedDealsList.innerHTML = '<div class="empty">No saved deals yet.</div>';
-        return;
-      }
-
-      savedDealsList.innerHTML = savedDeals.map(item => `
-        <div class="saved-item">
-          <div class="item-title">${item.productName}</div>
-          <div class="muted">Barcode: ${item.barcode}</div>
-          <div class="muted">Buy: £${item.buy} | Amazon: £${item.amazon}</div>
-          <div class="muted">${item.profitText} | ${item.roiText}</div>
-          <div class="muted">${item.verdict}</div>
-        </div>
-      `).join("");
-    }
-
-    function addToHistory(productName, barcode, amazon) {
-      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
-
-      history.unshift({
-        productName,
-        barcode,
-        amazon
-      });
-
-      localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 10)));
-    }
-
-    window.onload = function () {
-      const scannedBarcode = localStorage.getItem("scannedBarcode");
-      const scannedPrice = localStorage.getItem("scannedPrice");
-      const scannedName = localStorage.getItem("scannedName");
-
-      if (scannedBarcode) {
-        document.getElementById("barcode").value = scannedBarcode;
-        localStorage.removeItem("scannedBarcode");
-      }
-
-      if (scannedPrice) {
-        document.getElementById("amazon").value = scannedPrice;
-        localStorage.removeItem("scannedPrice");
-      }
-
-      if (scannedName) {
-        document.getElementById("productName").value = scannedName;
-        localStorage.removeItem("scannedName");
-      }
-
-      if (scannedBarcode || scannedPrice || scannedName) {
-        document.getElementById("scanMessage").style.display = "block";
-
-        if (navigator.vibrate) {
-          navigator.vibrate(200);
-        }
-
-        const productName = document.getElementById("productName").value || "Unknown Product";
-        const barcode = document.getElementById("barcode").value || "";
-        const amazon = document.getElementById("amazon").value || "0";
-        addToHistory(productName, barcode, amazon);
-
-        setTimeout(() => {
-          document.getElementById("scanMessage").style.display = "none";
-        }, 2500);
-
-        calculateIfReady();
-      }
-
-      renderHistory();
-      renderSavedDeals();
-    };
-  </script>
-
-</body>
-</html>
+      result
