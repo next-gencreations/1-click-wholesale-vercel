@@ -5,106 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>1-Click Profit Finder</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: #EEF4F2;
-      padding: 20px;
       margin: 0;
+      padding: 18px;
       color: #24323D;
     }
 
-    .card {
-      max-width: 520px;
-      margin: 24px auto;
-      background: white;
+    .card,
+    .section {
+      max-width: 560px;
+      margin: 18px auto;
+      background: #ffffff;
+      border-radius: 24px;
       padding: 22px;
-      border-radius: 22px;
-      box-sizing: border-box;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
     }
 
     h1, h2, h3 {
-      margin-top: 0;
+      margin: 0 0 16px 0;
+      line-height: 1.2;
     }
 
     h2 {
       text-align: center;
       font-size: 26px;
-      margin-bottom: 18px;
+      font-weight: 800;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 800;
     }
 
     label {
       display: block;
-      margin: 12px 0 6px;
-      color: #425564;
+      margin: 14px 0 8px;
       font-size: 16px;
       font-weight: 700;
+      color: #425564;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      margin-bottom: 6px;
-      border-radius: 14px;
-      border: 1px solid #cfcfcf;
-      box-sizing: border-box;
+      padding: 15px 16px;
+      border: 2px solid #d8d8d8;
+      border-radius: 18px;
       font-size: 16px;
+      outline: none;
       background: #fff;
+    }
+
+    input:focus {
+      border-color: #7ba596;
     }
 
     .readonly {
       background: #f7f7f7;
+      color: #555;
     }
 
     .switch-row {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #F6F7F7;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-top: 14px;
-      background: #F7FAF9;
-      border-radius: 14px;
-      padding: 14px;
+      align-items: center;
+      gap: 12px;
     }
 
     .switch-row label {
       margin: 0;
+      flex: 1;
       font-size: 15px;
       line-height: 1.3;
-      max-width: 75%;
     }
 
     .switch-row input[type="checkbox"] {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       margin: 0;
+      accent-color: #5D8A7A;
     }
 
-    .main-btn,
-    .scan-btn,
-    .link-btn,
-    .save-btn,
-    .clear-btn {
-      width: 100%;
-      padding: 14px;
+    button {
       border: none;
-      border-radius: 14px;
-      color: white;
-      cursor: pointer;
+      border-radius: 18px;
+      padding: 16px;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
+      cursor: pointer;
     }
 
-    .main-btn { background: #5D8A7A; }
-    .scan-btn { background: #4CAF50; }
-    .link-btn { background: #2196F3; }
-    .save-btn { background: #FF9800; }
-    .clear-btn { background: #777; }
+    .main-btn {
+      width: 100%;
+      background: #6C998A;
+      color: white;
+      margin-top: 16px;
+    }
 
     .button-row,
     .footer-actions {
-      margin-top: 14px;
       display: flex;
-      gap: 10px;
+      gap: 12px;
+      margin-top: 14px;
     }
 
     .button-row button,
@@ -112,80 +123,106 @@
       flex: 1;
     }
 
+    .scan-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .link-btn {
+      background: #2196F3;
+      color: white;
+    }
+
+    .save-btn {
+      background: #FF9800;
+      color: white;
+    }
+
+    .clear-btn {
+      background: #7c7c7c;
+      color: white;
+    }
+
     .message {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #E8F5E9;
-      color: #2e7d32;
       display: none;
+      margin-top: 14px;
+      background: #E6F7EA;
+      color: #207245;
+      padding: 12px 14px;
+      border-radius: 14px;
       font-weight: 700;
       text-align: center;
     }
 
     #result {
-      margin-top: 20px;
-      padding: 18px;
-      border-radius: 16px;
       display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 20px;
       background: #EEF4F2;
     }
 
     .deal-banner {
       text-align: center;
-      font-size: 28px;
-      font-weight: 800;
-      padding: 14px;
-      border-radius: 14px;
-      margin-bottom: 16px;
+      font-size: 30px;
+      font-weight: 900;
       color: white;
+      padding: 16px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
     }
 
-    .result-line {
-      margin: 0 0 10px 0;
-      font-weight: 700;
-      font-size: 20px;
+    .profit-big {
+      font-size: 30px;
+      font-weight: 900;
+      margin: 8px 0;
+    }
+
+    .roi-big {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 6px 0 14px;
     }
 
     .small-line {
-      margin: 0 0 8px 0;
-      font-weight: 600;
       font-size: 16px;
+      font-weight: 700;
+      margin: 8px 0;
+      color: #425564;
     }
 
-    .section {
-      margin: 22px auto 0;
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-      max-width: 520px;
-      box-sizing: border-box;
+    #verdict {
+      margin-top: 4px;
+      font-size: 22px;
+      font-weight: 900;
     }
 
-    .history-item, .saved-item {
+    .history-item,
+    .saved-item {
       background: #F7FAF9;
-      border: 1px solid #dde7e2;
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 10px;
+      border: 1px solid #E0E6E3;
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 12px;
     }
 
     .item-title {
+      font-size: 19px;
       font-weight: 800;
-      margin-bottom: 4px;
-      font-size: 18px;
+      margin-bottom: 6px;
     }
 
     .muted {
-      color: #5f6f79;
-      font-size: 14px;
-      line-height: 1.45;
+      color: #61717B;
+      font-size: 15px;
+      line-height: 1.5;
     }
 
     .empty {
-      color: #7b8a93;
-      margin-top: 10px;
+      color: #8a98a1;
+      font-size: 16px;
+      padding-top: 4px;
     }
   </style>
 </head>
@@ -195,40 +232,16 @@
     <h2>1-Click Profit Finder</h2>
 
     <label>Product</label>
-    <input
-      id="productName"
-      type="text"
-      placeholder="Will fill from scanner"
-      readonly
-      class="readonly"
-    />
+    <input id="productName" type="text" placeholder="Will fill from scanner" readonly class="readonly" />
 
     <label>Scanned Barcode</label>
-    <input
-      id="barcode"
-      type="text"
-      placeholder="Will fill from scanner"
-      readonly
-      class="readonly"
-    />
+    <input id="barcode" type="text" placeholder="Will fill from scanner" readonly class="readonly" />
 
     <label>Buy Price (£)</label>
-    <input
-      id="buy"
-      type="number"
-      step="0.01"
-      placeholder="e.g. 5"
-      oninput="calculateIfReady()"
-    />
+    <input id="buy" type="number" step="0.01" placeholder="e.g. 5" oninput="calculateIfReady()" />
 
     <label>Amazon Price (£)</label>
-    <input
-      id="amazon"
-      type="number"
-      step="0.01"
-      placeholder="e.g. 12"
-      oninput="calculateIfReady()"
-    />
+    <input id="amazon" type="number" step="0.01" placeholder="e.g. 12" oninput="calculateIfReady()" />
 
     <div class="switch-row">
       <label for="vatToggle">Include VAT estimate (20%)</label>
@@ -245,13 +258,15 @@
     <div id="scanMessage" class="message">✅ Product scanned successfully</div>
 
     <div id="result">
-      <div id="dealBanner" class="deal-banner">GOOD DEAL</div>
+      <div id="dealBanner" class="deal-banner">BUY</div>
 
-      <p id="fee" class="small-line"></p>
-      <p id="vatLine" class="small-line"></p>
-      <p id="profit" class="result-line"></p>
-      <p id="roi" class="result-line"></p>
-      <h3 id="verdict"></h3>
+      <div id="profit" class="profit-big">Profit: £0.00</div>
+      <div id="roi" class="roi-big">ROI: 0%</div>
+
+      <div id="fee" class="small-line">Amazon Fee: £0.00</div>
+      <div id="vatLine" class="small-line">VAT Estimate: Off</div>
+
+      <div id="verdict">👍 Worth a look</div>
 
       <div class="footer-actions">
         <button class="save-btn" onclick="saveDeal()">⭐ Save Deal</button>
@@ -283,9 +298,10 @@
     }
 
     function calculateIfReady() {
-      const buy = document.getElementById("buy").value;
-      const amazon = document.getElementById("amazon").value;
-      if (buy && amazon) {
+      const buy = document.getElementById("buy").value.trim();
+      const amazon = document.getElementById("amazon").value.trim();
+
+      if (buy !== "" && amazon !== "") {
         calculate();
       }
     }
@@ -295,43 +311,189 @@
       const amazon = parseFloat(document.getElementById("amazon").value);
       const vatOn = document.getElementById("vatToggle").checked;
 
-      if (!buy || !amazon) return;
+      if (isNaN(buy) || isNaN(amazon) || buy <= 0 || amazon <= 0) {
+        return;
+      }
 
       const fee = amazon * 0.15;
       const vat = vatOn ? amazon * 0.20 : 0;
       const profit = amazon - fee - vat - buy;
-      const roi = ((profit / buy) * 100).toFixed(1);
+      const roi = ((profit / buy) * 100);
 
       document.getElementById("fee").innerText = "Amazon Fee: £" + fee.toFixed(2);
       document.getElementById("vatLine").innerText = vatOn
         ? "VAT Estimate: £" + vat.toFixed(2)
         : "VAT Estimate: Off";
       document.getElementById("profit").innerText = "Profit: £" + profit.toFixed(2);
-      document.getElementById("roi").innerText = "ROI: " + roi + "%";
+      document.getElementById("roi").innerText = "ROI: " + roi.toFixed(1) + "%";
 
       let verdict = "";
       let cardColor = "";
       let bannerText = "";
       let bannerColor = "";
 
-      if (roi >= 40 && profit > 0) {
+      if (profit > 0 && roi >= 40) {
         verdict = "🔥 Great opportunity";
-        cardColor = "#C8E6C9";
         bannerText = "BUY";
         bannerColor = "#2E7D32";
-      } else if (roi >= 20 && profit > 0) {
+        cardColor = "#DDF3E1";
+      } else if (profit > 0 && roi >= 20) {
         verdict = "👍 Worth a look";
-        cardColor = "#FFF3CD";
         bannerText = "MAYBE";
         bannerColor = "#F9A825";
+        cardColor = "#FFF4D6";
       } else {
         verdict = "❌ Probably skip";
-        cardColor = "#FFCDD2";
         bannerText = "SKIP";
         bannerColor = "#C62828";
+        cardColor = "#F9DADA";
       }
 
-      document.getElementById("verdict").innerText = verdict;
-
       const resultBox = document.getElementById("result");
-      result
+      const banner = document.getElementById("dealBanner");
+
+      resultBox.style.display = "block";
+      resultBox.style.background = cardColor;
+
+      banner.innerText = bannerText;
+      banner.style.background = bannerColor;
+
+      document.getElementById("verdict").innerText = verdict;
+    }
+
+    function clearForm() {
+      document.getElementById("productName").value = "";
+      document.getElementById("barcode").value = "";
+      document.getElementById("buy").value = "";
+      document.getElementById("amazon").value = "";
+      document.getElementById("vatToggle").checked = false;
+      document.getElementById("result").style.display = "none";
+      document.getElementById("scanMessage").style.display = "none";
+    }
+
+    function saveDeal() {
+      const productName = document.getElementById("productName").value || "Unknown Product";
+      const barcode = document.getElementById("barcode").value || "No barcode";
+      const buy = document.getElementById("buy").value || "0";
+      const amazon = document.getElementById("amazon").value || "0";
+      const profitText = document.getElementById("profit").innerText || "Profit: £0.00";
+      const roiText = document.getElementById("roi").innerText || "ROI: 0%";
+      const verdict = document.getElementById("verdict").innerText || "";
+      const dealLabel = document.getElementById("dealBanner").innerText || "";
+
+      const savedDeals = JSON.parse(localStorage.getItem("savedDeals") || "[]");
+
+      savedDeals.unshift({
+        productName,
+        barcode,
+        buy,
+        amazon,
+        profitText,
+        roiText,
+        verdict,
+        dealLabel
+      });
+
+      localStorage.setItem("savedDeals", JSON.stringify(savedDeals.slice(0, 20)));
+      renderSavedDeals();
+      alert("Deal saved");
+    }
+
+    function renderHistory() {
+      const historyList = document.getElementById("historyList");
+      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
+
+      if (history.length === 0) {
+        historyList.innerHTML = '<div class="empty">No scans yet.</div>';
+        return;
+      }
+
+      historyList.innerHTML = history.map(item => `
+        <div class="history-item">
+          <div class="item-title">${item.productName}</div>
+          <div class="muted">Barcode: ${item.barcode}</div>
+          <div class="muted">Amazon Price: £${item.amazon}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderSavedDeals() {
+      const savedDealsList = document.getElementById("savedDealsList");
+      const savedDeals = JSON.parse(localStorage.getItem("savedDeals") || "[]");
+
+      if (savedDeals.length === 0) {
+        savedDealsList.innerHTML = '<div class="empty">No saved deals yet.</div>';
+        return;
+      }
+
+      savedDealsList.innerHTML = savedDeals.map(item => `
+        <div class="saved-item">
+          <div class="item-title">${item.productName}</div>
+          <div class="muted">Decision: ${item.dealLabel}</div>
+          <div class="muted">Barcode: ${item.barcode}</div>
+          <div class="muted">Buy: £${item.buy} | Amazon: £${item.amazon}</div>
+          <div class="muted">${item.profitText} | ${item.roiText}</div>
+          <div class="muted">${item.verdict}</div>
+        </div>
+      `).join("");
+    }
+
+    function addToHistory(productName, barcode, amazon) {
+      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
+
+      history.unshift({
+        productName,
+        barcode,
+        amazon
+      });
+
+      localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 10)));
+    }
+
+    window.onload = function () {
+      const scannedBarcode = localStorage.getItem("scannedBarcode");
+      const scannedPrice = localStorage.getItem("scannedPrice");
+      const scannedName = localStorage.getItem("scannedName");
+
+      if (scannedBarcode) {
+        document.getElementById("barcode").value = scannedBarcode;
+        localStorage.removeItem("scannedBarcode");
+      }
+
+      if (scannedPrice) {
+        document.getElementById("amazon").value = scannedPrice;
+        localStorage.removeItem("scannedPrice");
+      }
+
+      if (scannedName) {
+        document.getElementById("productName").value = scannedName;
+        localStorage.removeItem("scannedName");
+      }
+
+      if (scannedBarcode || scannedPrice || scannedName) {
+        document.getElementById("scanMessage").style.display = "block";
+
+        if (navigator.vibrate) {
+          navigator.vibrate(200);
+        }
+
+        const productName = document.getElementById("productName").value || "Unknown Product";
+        const barcode = document.getElementById("barcode").value || "";
+        const amazon = document.getElementById("amazon").value || "0";
+
+        addToHistory(productName, barcode, amazon);
+
+        setTimeout(() => {
+          document.getElementById("scanMessage").style.display = "none";
+        }, 2200);
+
+        calculateIfReady();
+      }
+
+      renderHistory();
+      renderSavedDeals();
+    };
+  </script>
+
+</body>
+</html>
