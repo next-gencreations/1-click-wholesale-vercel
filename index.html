@@ -48,7 +48,7 @@
       color: #425564;
     }
 
-    input, textarea, select {
+    input, textarea {
       width: 100%;
       padding: 14px 16px;
       border: 2px solid #d8d8d8;
@@ -225,7 +225,7 @@
     <input id="buy" type="number" step="0.01" placeholder="e.g. 6.00" oninput="calculateIfReady()" />
 
     <label>Amazon Price (£)</label>
-    <input id="amazon" type="number" step="0.01" placeholder="e.g. 11.00" oninput="calculateIfReady()" />
+    <input id="amazon" type="number" step="0.01" placeholder="Filled from demo/fallback or enter manually" oninput="calculateIfReady()" />
 
     <div class="switch-row">
       <span>Include VAT estimate (20%)</span>
@@ -237,7 +237,7 @@
     <div class="row">
       <button class="scan-btn" onclick="goToScanner()">📷 Scan</button>
       <button class="link-btn" onclick="pasteLink()">🔗 Add Amazon Link</button>
-      <button class="amazon-btn" onclick="searchAmazon()">🛒 Search Amazon</button>
+      <button class="amazon-btn" onclick="fetchAmazonPrice()">🛒 Amazon</button>
     </div>
 
     <div id="contentActions">
@@ -329,6 +329,49 @@
       showContentActionsIfProductExists();
     }
 
+    async function fetchAmazonPrice() {
+      const productName = document.getElementById("productName").value.trim();
+      const barcode = document.getElementById("barcode").value.trim();
+
+      if (!productName && !barcode) {
+        alert("Scan a product first");
+        return;
+      }
+
+      try {
+        const url = productName
+          ? `/api/amazon-price?query=${encodeURIComponent(productName)}&barcode=${encodeURIComponent(barcode)}`
+          : `/api/amazon-price?barcode=${encodeURIComponent(barcode)}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.title && !document.getElementById("productName").value) {
+          document.getElementById("productName").value = data.title;
+        }
+
+        if (data.price !== null && data.price !== undefined) {
+          document.getElementById("amazon").value = data.price;
+        }
+
+        if (data.affiliateUrl) {
+          const affiliateLink = applyAffiliateTag(data.affiliateUrl);
+          localStorage.setItem("amazonLink", affiliateLink);
+          localStorage.setItem("link", affiliateLink);
+        }
+
+        showContentActionsIfProductExists();
+        calculateIfReady();
+
+        if (data.source === "fallback-search" && !data.price) {
+          alert("No live price found yet. Opening Amazon search fallback.");
+          window.open(localStorage.getItem("amazonLink"), "_blank");
+        }
+      } catch (err) {
+        alert("Amazon lookup failed");
+      }
+    }
+
     function calculateIfReady() {
       showContentActionsIfProductExists();
 
@@ -388,19 +431,21 @@
       result.style.display = "block";
     }
 
-    function generateAffiliateLink(link) {
+    function applyAffiliateTag(url) {
       const tag = localStorage.getItem("affiliateId");
-      if (!tag) return link;
+      if (!tag) return url;
 
-      const clean = link.split("?")[0];
-      return clean + "?tag=" + tag;
+      const separator = url.includes("?") ? "&" : "?";
+      if (url.includes("tag=")) return url;
+      return url + separator + "tag=" + encodeURIComponent(tag);
     }
 
     function pasteLink() {
       const link = prompt("Paste Amazon product link");
       if (!link) return;
 
-      const affiliateLink = generateAffiliateLink(link);
+      const affiliateLink = applyAffiliateTag(link);
+      localStorage.setItem("amazonLink", affiliateLink);
       localStorage.setItem("link", affiliateLink);
       alert("Affiliate link saved");
     }
@@ -415,7 +460,8 @@
         return;
       }
 
-      const url = "https://www.amazon.co.uk/s?k=" + encodeURIComponent(query);
+      const url = applyAffiliateTag("https://www.amazon.co.uk/s?k=" + encodeURIComponent(query));
+      localStorage.setItem("amazonLink", url);
       window.open(url, "_blank");
     }
 
@@ -457,7 +503,7 @@
     function saveAffiliate() {
       const product = document.getElementById("productName").value || "Unknown Product";
       const amazon = document.getElementById("amazon").value || "";
-      const link = localStorage.getItem("link") || "";
+      const link = localStorage.getItem("amazonLink") || localStorage.getItem("link") || "";
 
       const list = JSON.parse(localStorage.getItem("aff") || "[]");
       list.unshift({
@@ -514,6 +560,7 @@
       localStorage.removeItem("scannedBarcode");
       localStorage.removeItem("scannedName");
       localStorage.removeItem("scannedPrice");
+      localStorage.removeItem("amazonLink");
     }
 
     window.onload = async function() {
@@ -528,6 +575,10 @@
 
       if (scannedBarcode && !scannedName) {
         await fetchProduct(scannedBarcode);
+      }
+
+      if (scannedBarcode) {
+        await fetchAmazonPrice();
       }
 
       showContentActionsIfProductExists();
