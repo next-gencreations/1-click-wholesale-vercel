@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -24,7 +24,7 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.06);
     }
 
-    h1, h2, h3 {
+    h2, h3 {
       margin: 0 0 16px 0;
       line-height: 1.2;
     }
@@ -61,10 +61,6 @@
     textarea {
       min-height: 120px;
       resize: vertical;
-    }
-
-    input:focus, textarea:focus {
-      border-color: #7ba596;
     }
 
     .readonly {
@@ -119,6 +115,15 @@
       color: #207245;
       font-weight: 700;
       text-align: center;
+    }
+
+    #contentActions {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 20px;
+      background: #F7FAF9;
+      border: 1px solid #E0E6E3;
     }
 
     #result {
@@ -216,9 +221,6 @@
       background: #eee;
     }
 
-    .buy { background: #DDF3E1; color: #256b35; }
-    .maybe { background: #FFF4D6; color: #9a6a00; }
-    .skip { background: #F9DADA; color: #9f2222; }
     .affiliate { background: #EFE0F7; color: #6f2c91; }
   </style>
 </head>
@@ -249,21 +251,8 @@
 
     <div id="scanMessage" class="message">✅ Product scanned successfully</div>
 
-    <div id="result">
-      <div id="dealBanner" class="deal-banner">BUY</div>
-
-      <div id="profit" class="profit-big">Profit: £0.00</div>
-      <div id="roi" class="roi-big">ROI: 0%</div>
-      <div id="score" class="score-big">Score: 0/100</div>
-
-      <div id="fee" class="small-line">Amazon Fee: £0.00</div>
-      <div id="verdict">👍 Worth a look</div>
-
-      <div class="row">
-        <button class="save-btn" onclick="saveDeal()">⭐ Save Deal</button>
-        <button class="affiliate-btn" onclick="saveAffiliate()">💰 Save Affiliate</button>
-      </div>
-
+    <div id="contentActions">
+      <h3>Content Tools</h3>
       <div class="row">
         <button class="idea-btn" onclick="generateContentIdea()">💡 Idea</button>
         <button class="tiktok-btn" onclick="generateTikTokCaption()">🎥 TikTok</button>
@@ -271,6 +260,7 @@
       </div>
 
       <div class="row">
+        <button class="affiliate-btn" onclick="saveAffiliate()">💰 Save Affiliate</button>
         <button class="clear-btn" onclick="clearForm()">🗑 Clear</button>
       </div>
 
@@ -287,6 +277,18 @@
       <div id="instagramBox" class="block" style="display:none;">
         <div class="item-title">Instagram Caption</div>
         <textarea id="instagramCaption" readonly></textarea>
+      </div>
+    </div>
+
+    <div id="result">
+      <div id="dealBanner" class="deal-banner">BUY</div>
+      <div id="profit" class="profit-big">Profit: £0.00</div>
+      <div id="roi" class="roi-big">ROI: 0%</div>
+      <div id="score" class="score-big">Score: 0/100</div>
+      <div id="fee" class="small-line">Amazon Fee: £0.00</div>
+      <div id="verdict">👍 Worth a look</div>
+      <div class="row">
+        <button class="save-btn" onclick="saveDeal()">⭐ Save Deal</button>
       </div>
     </div>
   </div>
@@ -308,9 +310,21 @@
       window.location.href = "barcode-scanner.html";
     }
 
+    function showContentActionsIfProductExists() {
+      const name = document.getElementById("productName").value.trim();
+      const barcode = document.getElementById("barcode").value.trim();
+      const amazon = document.getElementById("amazon").value.trim();
+
+      if (name || barcode || amazon) {
+        document.getElementById("contentActions").style.display = "block";
+      }
+    }
+
     function calculateIfReady() {
       const buy = document.getElementById("buy").value.trim();
       const amazon = document.getElementById("amazon").value.trim();
+      showContentActionsIfProductExists();
+
       if (buy !== "" && amazon !== "") {
         calculate();
       }
@@ -390,59 +404,53 @@
     function buildContentIdea() {
       const name = document.getElementById("productName").value || "this product";
       const price = document.getElementById("amazon").value || "0";
-      const dealType = document.getElementById("dealBanner").innerText || "MAYBE";
 
-      if (dealType === "BUY") {
-        return `Reseller find: ${name} looks like a strong flip at around £${price}. Great for a quick sourcing post or deal breakdown.`;
-      }
-      if (dealType === "MAYBE") {
-        return `Worth testing: ${name} could work as a reseller item or as an affiliate content post. Current Amazon price is about £${price}.`;
-      }
-      return `Affiliate angle: ${name} may not be the best resale item, but it could still work for content like "Amazon finds under £${price}" or "products worth checking out".`;
+      return `Content angle: ${name} is selling around £${price}. Good for Amazon finds, product spotlights, or a quick in-store discovery post.`;
     }
 
     function generateContentIdea() {
       const idea = buildContentIdea();
       document.getElementById("contentIdea").innerText = idea;
       document.getElementById("ideaBox").style.display = "block";
+      document.getElementById("contentActions").style.display = "block";
     }
 
     function generateTikTokCaption() {
       const name = document.getElementById("productName").value || "This product";
       const price = document.getElementById("amazon").value || "0";
-      const deal = document.getElementById("dealBanner").innerText || "MAYBE";
 
       const caption =
-`🔥 ${deal} ALERT
+`🔥 Amazon find
 
-Found: ${name}
+Product: ${name}
 Amazon price: £${price}
 
 Would you buy this?
 
-#amazonfinds #ukdeals #reseller #flipfinds #tiktokmademebuyit #dealhunter`;
+#amazonfinds #ukdeals #reseller #flipfinds #tiktokmademebuyit`;
 
       document.getElementById("tiktokCaption").value = caption;
       document.getElementById("tiktokBox").style.display = "block";
+      document.getElementById("contentActions").style.display = "block";
     }
 
     function generateInstagramCaption() {
       const name = document.getElementById("productName").value || "This product";
       const price = document.getElementById("amazon").value || "0";
-      const deal = document.getElementById("dealBanner").innerText || "MAYBE";
 
       const caption =
-`${deal} deal check 👀
+`Amazon find 👀
 
 Product: ${name}
 Amazon price: £${price}
 
 Saving product ideas like this for resale and affiliate content.
 
-#amazonfinds #instagramfinds #ukshopping #resellerlife #dealfinds #productresearch`;
+#amazonfinds #instagramfinds #ukshopping #resellerlife #dealfinds`;
 
       document.getElementById("instagramCaption").value = caption;
       document.getElementById("instagramBox").style.display = "block";
+      document.getElementById("contentActions").style.display = "block";
     }
 
     function saveDeal() {
@@ -495,6 +503,7 @@ Saving product ideas like this for resale and affiliate content.
       document.getElementById("buy").value = "";
       document.getElementById("amazon").value = "";
       document.getElementById("result").style.display = "none";
+      document.getElementById("contentActions").style.display = "none";
       document.getElementById("ideaBox").style.display = "none";
       document.getElementById("tiktokBox").style.display = "none";
       document.getElementById("instagramBox").style.display = "none";
@@ -507,6 +516,7 @@ Saving product ideas like this for resale and affiliate content.
       document.getElementById("affiliateId").value = localStorage.getItem("affiliateId") || "";
 
       renderAffiliateList();
+      showContentActionsIfProductExists();
 
       if (
         localStorage.getItem("scannedName") ||
