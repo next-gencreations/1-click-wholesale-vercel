@@ -1,214 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1-Click Profit Finder</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1-Click Profit Finder</title>
 
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      font-family: Arial;
-      background:#EEF4F2;
-      margin:0;
-      padding:18px;
-      color:#24323D;
-    }
-
-    .card, .section {
-      max-width:560px;
-      margin:18px auto;
-      background:white;
-      border-radius:24px;
-      padding:22px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.06);
-    }
-
-    h2 { text-align:center; margin-bottom:16px; }
-
-    label {
-      font-weight:700;
-      margin-top:14px;
-      display:block;
-    }
-
-    input {
-      width:100%;
-      padding:14px;
-      border-radius:16px;
-      border:2px solid #ddd;
-      margin-top:6px;
-    }
-
-    .readonly { background:#f7f7f7; }
-
-    button {
-      border:none;
-      border-radius:16px;
-      padding:14px;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    .main-btn { background:#6C998A; color:white; width:100%; margin-top:14px; }
-    .scan-btn { background:#4CAF50; color:white; }
-    .link-btn { background:#2196F3; color:white; }
-    .save-btn { background:#FF9800; color:white; }
-    .affiliate-btn { background:#8E44AD; color:white; }
-    .clear-btn { background:#777; color:white; }
-
-    .row { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
-    .row button { flex:1; }
-
-    #result {
-      display:none;
-      margin-top:18px;
-      padding:18px;
-      border-radius:20px;
-    }
-
-    .deal-banner {
-      text-align:center;
-      font-size:28px;
-      font-weight:900;
-      color:white;
-      padding:14px;
-      border-radius:16px;
-      margin-bottom:12px;
-    }
-
-    .profit-big { font-size:28px; font-weight:900; }
-    .roi-big { font-size:20px; font-weight:800; }
-
-    .item {
-      background:#F7FAF9;
-      border-radius:16px;
-      padding:12px;
-      margin-top:10px;
-    }
-
-    .tag {
-      margin-top:6px;
-      display:inline-block;
-      padding:5px 10px;
-      border-radius:999px;
-      font-weight:700;
-      font-size:12px;
-      background:#eee;
-    }
-  </style>
+<style>
+body { font-family: Arial; background:#EEF4F2; padding:18px; }
+.card,.section { max-width:560px; margin:18px auto; background:white; padding:20px; border-radius:20px; }
+input { width:100%; padding:12px; margin-top:6px; border-radius:12px; border:1px solid #ccc; }
+button { padding:12px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; }
+.row { display:flex; gap:10px; margin-top:10px; }
+.row button { flex:1; }
+.main { background:#5D8A7A; color:white; width:100%; margin-top:10px; }
+.scan { background:#4CAF50; color:white; }
+.link { background:#2196F3; color:white; }
+.aff { background:#8E44AD; color:white; }
+.save { background:#FF9800; color:white; }
+.clear { background:#777; color:white; }
+.banner { text-align:center; font-size:26px; color:white; padding:10px; border-radius:12px; margin-bottom:10px; }
+</style>
 </head>
 
 <body>
 
 <div class="card">
-  <h2>1-Click Profit Finder</h2>
+<h2>1-Click Profit Finder</h2>
 
-  <label>Product</label>
-  <input id="productName" readonly class="readonly"/>
+<label>Product</label>
+<input id="productName" readonly />
 
-  <label>Barcode</label>
-  <input id="barcode" readonly class="readonly"/>
+<label>Barcode</label>
+<input id="barcode" readonly />
 
-  <label>Buy Price (£)</label>
-  <input id="buy" type="number" oninput="calculateIfReady()"/>
+<label>Buy Price</label>
+<input id="buy" type="number" oninput="autoCalc()" />
 
-  <label>Amazon Price (£)</label>
-  <input id="amazon" type="number" oninput="calculateIfReady()"/>
+<label>Amazon Price</label>
+<input id="amazon" type="number" oninput="autoCalc()" />
 
-  <button class="main-btn" onclick="calculate()">Check Profit</button>
+<button class="main" onclick="calc()">Check Profit</button>
 
-  <div class="row">
-    <button class="scan-btn" onclick="goToScanner()">📷 Scan</button>
-    <button class="link-btn" onclick="pasteLink()">🔗 Link</button>
-  </div>
+<div class="row">
+<button class="scan" onclick="goScan()">📷 Scan</button>
+<button class="link" onclick="pasteLink()">🔗 Link</button>
+</div>
 
-  <div id="result">
-    <div id="banner" class="deal-banner">BUY</div>
+<div id="result" style="display:none;">
+<div id="banner" class="banner">BUY</div>
+<div id="profit"></div>
+<div id="roi"></div>
 
-    <div id="profit" class="profit-big"></div>
-    <div id="roi" class="roi-big"></div>
-
-    <div id="verdict"></div>
-
-    <div class="row">
-      <button class="save-btn" onclick="saveDeal()">⭐ Save</button>
-      <button class="affiliate-btn" onclick="saveAffiliate()">💰 Affiliate</button>
-      <button class="clear-btn" onclick="clearForm()">🗑</button>
-    </div>
-  </div>
+<div class="row">
+<button class="save" onclick="saveDeal()">⭐ Save</button>
+<button class="aff" onclick="saveAffiliate()">💰 Affiliate</button>
+<button class="clear" onclick="clearForm()">🗑</button>
+</div>
+</div>
 </div>
 
 <div class="section">
-  <h3>Affiliate Opportunities</h3>
-  <div id="affiliateList"></div>
+<h3>Affiliate Products</h3>
+<div id="affList"></div>
 </div>
 
 <div class="section">
-  <h3>Amazon Accounts</h3>
-
-  <label>Affiliate ID</label>
-  <input id="affiliateId" placeholder="yourtag-21"/>
-
-  <button class="main-btn" onclick="saveSettings()">Save</button>
+<h3>Amazon Settings</h3>
+<label>Affiliate ID</label>
+<input id="affiliateId" placeholder="yourtag-21"/>
+<button class="main" onclick="saveSettings()">Save</button>
 </div>
 
 <script>
 
-function goToScanner(){
-  window.location.href="barcode-scanner.html";
+// NAV
+function goScan(){ window.location.href="barcode-scanner.html"; }
+
+// AUTO CALC
+function autoCalc(){
+  if(buy.value && amazon.value) calc();
 }
 
-function pasteLink(){
-  let link = prompt("Paste Amazon link");
-  if(link){
-    localStorage.setItem("link",link);
-    alert("Saved");
-  }
-}
+// PROFIT
+function calc(){
+  let b=parseFloat(buy.value);
+  let a=parseFloat(amazon.value);
+  let fee=a*0.15;
+  let profit=a-fee-b;
+  let roi=(profit/b)*100;
 
-function calculateIfReady(){
-  if(buy.value && amazon.value) calculate();
-}
-
-function calculate(){
-  let buy = parseFloat(document.getElementById("buy").value);
-  let amazon = parseFloat(document.getElementById("amazon").value);
-
-  let fee = amazon*0.15;
-  let profit = amazon-fee-buy;
-  let roi = (profit/buy)*100;
-
-  document.getElementById("profit").innerText="£"+profit.toFixed(2);
-  document.getElementById("roi").innerText=roi.toFixed(1)+"%";
+  profitEl.innerText="Profit £"+profit.toFixed(2);
+  roiEl.innerText="ROI "+roi.toFixed(1)+"%";
 
   let banner=document.getElementById("banner");
 
   if(profit>0 && roi>40){
     banner.innerText="BUY";
     banner.style.background="#2E7D32";
-  }
-  else if(profit>0){
+  } else if(profit>0){
     banner.innerText="MAYBE";
     banner.style.background="#F9A825";
-  }
-  else{
+  } else {
     banner.innerText="SKIP";
     banner.style.background="#C62828";
   }
 
-  document.getElementById("result").style.display="block";
+  result.style.display="block";
 }
 
-function saveDeal(){
-  alert("Saved deal");
+// AUTO AFFILIATE LINK 🔥
+function generateAffiliateLink(link){
+  let tag=localStorage.getItem("affiliateId");
+  if(!tag){ alert("Add affiliate ID"); return link; }
+  let clean=link.split("?")[0];
+  return clean+"?tag="+tag;
 }
 
+// LINK INPUT
+function pasteLink(){
+  let link=prompt("Paste Amazon link");
+  if(link){
+    let affLink=generateAffiliateLink(link);
+    localStorage.setItem("link",affLink);
+    alert("Affiliate link created ✅");
+  }
+}
+
+// SAVE AFFILIATE
 function saveAffiliate(){
   let data={
     name:productName.value,
-    barcode:barcode.value,
     price:amazon.value,
     link:localStorage.getItem("link")||"none"
   };
@@ -216,28 +137,27 @@ function saveAffiliate(){
   let list=JSON.parse(localStorage.getItem("aff")||"[]");
   list.unshift(data);
   localStorage.setItem("aff",JSON.stringify(list));
-
-  renderAffiliate();
+  renderAff();
 }
 
-function renderAffiliate(){
+// RENDER
+function renderAff(){
   let list=JSON.parse(localStorage.getItem("aff")||"[]");
-  let el=document.getElementById("affiliateList");
-
-  el.innerHTML=list.map(i=>`
-    <div class="item">
-      <b>${i.name}</b><br>
-      £${i.price}<br>
-      <small>${i.link}</small>
-    </div>
-  `).join("");
+  affList.innerHTML=list.map(i=>`
+  <div style="margin-top:10px;">
+    <b>${i.name}</b><br>
+    £${i.price}<br>
+    <small>${i.link}</small>
+  </div>`).join("");
 }
 
+// SETTINGS
 function saveSettings(){
   localStorage.setItem("affiliateId",affiliateId.value);
   alert("Saved");
 }
 
+// CLEAR
 function clearForm(){
   productName.value="";
   barcode.value="";
@@ -246,14 +166,13 @@ function clearForm(){
   result.style.display="none";
 }
 
+// LOAD
 window.onload=function(){
   productName.value=localStorage.getItem("scannedName")||"";
   barcode.value=localStorage.getItem("scannedBarcode")||"";
   amazon.value=localStorage.getItem("scannedPrice")||"";
-
   affiliateId.value=localStorage.getItem("affiliateId")||"";
-
-  renderAffiliate();
+  renderAff();
 };
 
 </script>
