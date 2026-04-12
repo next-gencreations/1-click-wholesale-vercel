@@ -1,126 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>1-Click Profit Finder</title>
 
 <style>
-body { font-family: Arial; background:#EEF4F2; padding:18px; }
-.card,.section { max-width:560px; margin:18px auto; background:white; padding:20px; border-radius:20px; }
-input { width:100%; padding:12px; margin-top:6px; border-radius:12px; border:1px solid #ccc; }
-button { padding:12px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; }
-.row { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+body { font-family: Arial; background:#EEF4F2; padding:15px; }
+.card { background:white; padding:20px; border-radius:20px; max-width:500px; margin:auto; }
+input { width:100%; padding:10px; margin:8px 0; border-radius:10px; border:1px solid #ccc; }
+button { padding:12px; border:none; border-radius:10px; margin-top:8px; font-weight:bold; }
+.row { display:flex; gap:10px; }
 .row button { flex:1; }
-.main { background:#5D8A7A; color:white; width:100%; }
-.scan { background:#4CAF50; color:white; }
-.link { background:#2196F3; color:white; }
-.aff { background:#8E44AD; color:white; }
-.idea { background:#E91E63; color:white; }
-.insta { background:#C13584; color:white; }
-.search { background:#009688; color:white; }
-.banner { text-align:center; font-size:26px; color:white; padding:10px; border-radius:12px; margin:10px 0; }
-.block { background:#F7FAF9; padding:10px; border-radius:12px; margin-top:10px; }
+.banner { text-align:center; padding:10px; color:white; border-radius:10px; font-size:22px; }
+.box { background:#F4F4F4; padding:10px; border-radius:10px; margin-top:10px; }
 </style>
 </head>
 
 <body>
 
 <div class="card">
+
 <h2>1-Click Profit Finder</h2>
 
-<label>Product</label>
-<input id="productName" readonly>
+<input id="productName" placeholder="Product" readonly>
+<input id="barcode" placeholder="Barcode" readonly>
 
-<label>Barcode</label>
-<input id="barcode" readonly>
+<input id="buy" placeholder="Buy Price" type="number" oninput="autoCalc()">
+<input id="amazon" placeholder="Amazon Price" type="number" oninput="autoCalc()">
 
-<label>Buy Price</label>
-<input id="buy" type="number" oninput="autoCalc()">
-
-<label>Amazon Price</label>
-<input id="amazon" type="number" oninput="autoCalc()">
-
-<button class="main" onclick="calc()">Check Profit</button>
+<button onclick="calc()">Check Profit</button>
 
 <div class="row">
-<button class="scan" onclick="goScan()">📷 Scan</button>
-<button class="link" onclick="pasteLink()">🔗 Link</button>
-<button class="search" onclick="searchWeb()">🌍 Price Check</button>
+<button onclick="goScan()">📷 Scan</button>
+<button onclick="pasteLink()">🔗 Link</button>
+<button onclick="searchAmazon()">🛒 Amazon</button>
 </div>
 
 <div id="result" style="display:none;">
+
 <div id="banner" class="banner">BUY</div>
+
 <div id="profit"></div>
 <div id="roi"></div>
+<div id="score"></div>
 
 <div class="row">
-<button class="aff" onclick="saveAffiliate()">💰 Save</button>
-<button class="idea" onclick="generateIdea()">💡 Idea</button>
-<button class="insta" onclick="generateInstagram()">📸 Insta</button>
+<button onclick="generateIdea()">💡 Idea</button>
+<button onclick="tiktokMode()">🎥 TikTok</button>
+<button onclick="saveAffiliate()">💰 Save</button>
 </div>
 
-<div id="ideaBox" class="block" style="display:none;"></div>
-<div id="instaBox" class="block" style="display:none;"></div>
+<div id="ideaBox" class="box" style="display:none;"></div>
+<div id="tiktokBox" class="box" style="display:none;"></div>
 
 </div>
-</div>
 
-<div class="section">
-<h3>Affiliate Products</h3>
-<div id="affList"></div>
-</div>
-
-<div class="section">
-<h3>Amazon Settings</h3>
-<label>Affiliate ID</label>
-<input id="affiliateId" placeholder="yourtag-21">
-<button class="main" onclick="saveSettings()">Save</button>
-</div>
-
-<div class="section">
-<h3>🔐 API Keys (future use)</h3>
-<input id="apiKey" placeholder="Store API key safely">
-<button onclick="saveKey()">Save Key</button>
-</div>
-
-<div class="section">
-<h3>⚠️ Disclaimer</h3>
-<p style="font-size:14px;">
-Prices and profits are estimates only. Always verify before purchasing stock.
-This tool is for guidance only.
-</p>
 </div>
 
 <script>
 
+// SCAN
 function goScan(){ window.location.href="barcode-scanner.html"; }
 
+// AUTO CALC
 function autoCalc(){
   if(buy.value && amazon.value) calc();
 }
 
+// MAIN CALC
 function calc(){
   let b=parseFloat(buy.value);
   let a=parseFloat(amazon.value);
+
   let fee=a*0.15;
   let profit=a-fee-b;
   let roi=(profit/b)*100;
 
-  profit.innerText="Profit £"+profit.toFixed(2);
-  roi.innerText="ROI "+roi.toFixed(1)+"%";
+  profitEl.innerText="Profit £"+profit.toFixed(2);
+  roiEl.innerText="ROI "+roi.toFixed(1)+"%";
 
-  if(profit>0 && roi>40){
-    banner.innerText="BUY"; banner.style.background="#2E7D32";
-  } else if(profit>0){
-    banner.innerText="MAYBE"; banner.style.background="#F9A825";
+  // SCORE SYSTEM 🔥
+  let score = 0;
+
+  if(profit > 5) score += 30;
+  if(roi > 40) score += 40;
+  if(a < 50) score += 20;
+  if(a < 20) score += 10;
+
+  scoreEl.innerText="Score: "+score+"/100";
+
+  // VERDICT
+  if(score >= 70){
+    banner.innerText="BUY";
+    banner.style.background="#2E7D32";
+  } else if(score >= 40){
+    banner.innerText="MAYBE";
+    banner.style.background="#F9A825";
   } else {
-    banner.innerText="SKIP"; banner.style.background="#C62828";
+    banner.innerText="SKIP";
+    banner.style.background="#C62828";
   }
 
   result.style.display="block";
 }
 
+// AMAZON SEARCH (LIVE FEEL)
+function searchAmazon(){
+  let query = productName.value || barcode.value;
+  window.open("https://www.amazon.co.uk/s?k="+query);
+}
+
+// AFFILIATE LINK
 function generateAffiliateLink(link){
   let tag=localStorage.getItem("affiliateId");
   if(!tag) return link;
@@ -136,6 +126,21 @@ function pasteLink(){
   }
 }
 
+// CONTENT IDEA
+function generateIdea(){
+  let idea = `Amazon find: ${productName.value} under £${amazon.value}`;
+  ideaBox.innerText = idea;
+  ideaBox.style.display="block";
+}
+
+// 🎥 TIKTOK MODE (MONEY MAKER)
+function tiktokMode(){
+  let text = `🔥 You won’t believe this\n${productName.value}\nOnly £${amazon.value}\n\n#amazonfinds #deals #tiktokshop`;
+  tiktokBox.innerText = text;
+  tiktokBox.style.display="block";
+}
+
+// SAVE
 function saveAffiliate(){
   let item={
     name:productName.value,
@@ -147,53 +152,14 @@ function saveAffiliate(){
   list.unshift(item);
   localStorage.setItem("aff",JSON.stringify(list));
 
-  renderAff();
-}
-
-function generateIdea(){
-  let idea=`Top Amazon find: ${productName.value} under £${amazon.value}`;
-  ideaBox.innerText=idea;
-  ideaBox.style.display="block";
-}
-
-function generateInstagram(){
-  let caption=`🔥 Amazon Find\n${productName.value}\nOnly £${amazon.value}\n\nCheck link in bio\n#amazonfinds #deals #ukshopping`;
-  instaBox.innerText=caption;
-  instaBox.style.display="block";
-}
-
-function searchWeb(){
-  let query=productName.value;
-  window.open("https://www.google.com/search?q="+query+" price");
-}
-
-function saveSettings(){
-  localStorage.setItem("affiliateId",affiliateId.value);
   alert("Saved");
 }
 
-function saveKey(){
-  localStorage.setItem("apiKey",apiKey.value);
-  alert("Key saved locally");
-}
-
-function renderAff(){
-  let list=JSON.parse(localStorage.getItem("aff")||"[]");
-  affList.innerHTML=list.map(i=>`
-    <div class="block">
-      <b>${i.name}</b><br>
-      £${i.price}<br>
-      <small>${i.link}</small>
-    </div>
-  `).join("");
-}
-
+// LOAD
 window.onload=function(){
   productName.value=localStorage.getItem("scannedName")||"";
   barcode.value=localStorage.getItem("scannedBarcode")||"";
   amazon.value=localStorage.getItem("scannedPrice")||"";
-  affiliateId.value=localStorage.getItem("affiliateId")||"";
-  renderAff();
 };
 
 </script>
