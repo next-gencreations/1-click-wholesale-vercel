@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
       res.status(200).json({
         name: product.product_name || "Unknown Product",
-        brand: product.brands || "",
+        brand: product.brands || ""
       });
     } else {
       res.status(404).json({ error: "Product not found" });
