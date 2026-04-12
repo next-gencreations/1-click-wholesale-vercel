@@ -510,6 +510,18 @@ Saving product ideas like this for resale and affiliate content.
     }
 
     window.onload = function() {
+      async function fetchProduct(barcode) {
+  try {
+    const res = await fetch(`/api/lookup?barcode=${barcode}`);
+    const data = await res.json();
+
+    if (data.name) {
+      document.getElementById("productName").value = data.name;
+    }
+  } catch (e) {
+    console.log("Lookup failed");
+  }
+}
       document.getElementById("productName").value = localStorage.getItem("scannedName") || "";
       document.getElementById("barcode").value = localStorage.getItem("scannedBarcode") || "";
       document.getElementById("amazon").value = localStorage.getItem("scannedPrice") || "";
