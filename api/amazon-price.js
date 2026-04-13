@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const demoProducts = {
     "50002214": {
       title: "Scented Candle",
-      price: 11.0,
+      price: 11.00,
       affiliateUrl: "https://www.amazon.co.uk/s?k=scented+candle",
       source: "demo"
     },
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     },
     "5055555555555": {
       title: "Bluetooth Speaker",
-      price: 18.5,
+      price: 18.50,
       affiliateUrl: "https://www.amazon.co.uk/s?k=bluetooth+speaker",
       source: "demo"
     }
@@ -38,13 +38,19 @@ export default async function handler(req, res) {
     }
 
     const searchTerm = encodeURIComponent(query || barcode);
+
     return res.status(200).json({
-      title: query || "Amazon product",
+      title: query || `Scanned item ${barcode || ""}`.trim(),
       price: null,
       affiliateUrl: `https://www.amazon.co.uk/s?k=${searchTerm}`,
       source: "fallback-search"
     });
   } catch (error) {
-    return res.status(500).json({ error: "Amazon lookup failed" });
+    return res.status(200).json({
+      title: query || `Scanned item ${barcode || ""}`.trim(),
+      price: null,
+      affiliateUrl: `https://www.amazon.co.uk/s?k=${encodeURIComponent(query || barcode || "")}`,
+      source: "fallback-search"
+    });
   }
 }
