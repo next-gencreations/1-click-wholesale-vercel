@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scan Barcode</title>
@@ -16,7 +16,7 @@
     }
 
     h1 {
-      font-size: 22px;
+      font-size: 24px;
       margin-bottom: 10px;
     }
 
@@ -99,9 +99,9 @@
 
     function saveScan(barcode) {
       localStorage.setItem("scannedBarcode", barcode);
-      localStorage.setItem("scannedName", "");
-      localStorage.setItem("scannedPrice", "");
-      localStorage.setItem("amazonLink", "");
+      localStorage.removeItem("scannedName");
+      localStorage.removeItem("scannedPrice");
+      localStorage.removeItem("amazonLink");
       window.location.href = "index.html";
     }
 
