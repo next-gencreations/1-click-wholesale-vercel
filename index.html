@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -326,7 +326,7 @@
     }
 
     function fallbackProductName(barcode) {
-      return barcode ? `Scanned item ${barcode}` : "Unknown Product";
+      return barcode ? `Retail product (${barcode})` : "Unknown Product";
     }
 
     async function fetchProduct(barcode) {
