@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>1-Click Profit Finder</title>
@@ -208,6 +208,17 @@
       color: #8a98a1;
       font-size: 16px;
     }
+
+    .ok {
+      background: #E6F7EA;
+      color: #207245;
+      border: 1px solid #cdeed5;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      margin-top: 14px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -225,7 +236,7 @@
     <input id="buy" type="number" step="0.01" placeholder="e.g. 6.00" oninput="calculateIfReady()" />
 
     <label>Amazon Price (£)</label>
-    <input id="amazon" type="number" step="0.01" placeholder="Filled from demo/fallback or enter manually" oninput="calculateIfReady()" />
+    <input id="amazon" type="number" step="0.01" placeholder="Enter Amazon price or use demo-supported codes" oninput="calculateIfReady()" />
 
     <div class="switch-row">
       <span>Include VAT estimate (20%)</span>
@@ -237,8 +248,10 @@
     <div class="row">
       <button class="scan-btn" onclick="goToScanner()">📷 Scan</button>
       <button class="link-btn" onclick="pasteLink()">🔗 Add Amazon Link</button>
-      <button class="amazon-btn" onclick="fetchAmazonPrice()">🛒 Amazon</button>
+      <button class="amazon-btn" onclick="openAmazonSearch()">🛒 Amazon</button>
     </div>
+
+    <div id="scanMessage" class="ok">✅ Scan loaded</div>
 
     <div id="contentActions">
       <h3>Content Tools</h3>
@@ -312,18 +325,22 @@
       }
     }
 
+    function fallbackProductName(barcode) {
+      return barcode ? `Scanned item ${barcode}` : "Unknown Product";
+    }
+
     async function fetchProduct(barcode) {
       try {
         const res = await fetch(`/api/lookup?barcode=${encodeURIComponent(barcode)}`);
         const data = await res.json();
 
-        if (data.name) {
-          document.getElementById("productName").value = data.name;
-        } else {
-          document.getElementById("productName").value = "Unknown Product";
-        }
+        const name = data.name || fallbackProductName(barcode);
+        document.getElementById("productName").value = name;
+        localStorage.setItem("scannedName", name);
       } catch (e) {
-        document.getElementById("productName").value = "Unknown Product";
+        const name = fallbackProductName(barcode);
+        document.getElementById("productName").value = name;
+        localStorage.setItem("scannedName", name);
       }
 
       showContentActionsIfProductExists();
@@ -333,10 +350,7 @@
       const productName = document.getElementById("productName").value.trim();
       const barcode = document.getElementById("barcode").value.trim();
 
-      if (!productName && !barcode) {
-        alert("Scan a product first");
-        return;
-      }
+      if (!productName && !barcode) return;
 
       try {
         const url = productName
@@ -346,12 +360,15 @@
         const res = await fetch(url);
         const data = await res.json();
 
-        if (data.title && !document.getElementById("productName").value) {
+        if (data.title && (!document.getElementById("productName").value || document.getElementById("productName").value === "Unknown Product")) {
           document.getElementById("productName").value = data.title;
+          localStorage.setItem("scannedName", data.title);
         }
 
         if (data.price !== null && data.price !== undefined) {
-          document.getElementById("amazon").value = data.price;
+          const price = Number(data.price).toFixed(2);
+          document.getElementById("amazon").value = price;
+          localStorage.setItem("scannedPrice", price);
         }
 
         if (data.affiliateUrl) {
@@ -362,19 +379,13 @@
 
         showContentActionsIfProductExists();
         calculateIfReady();
-
-        if (data.source === "fallback-search" && !data.price) {
-          alert("No live price found yet. Opening Amazon search fallback.");
-          window.open(localStorage.getItem("amazonLink"), "_blank");
-        }
       } catch (err) {
-        alert("Amazon lookup failed");
+        console.log("Amazon fallback failed");
       }
     }
 
     function calculateIfReady() {
       showContentActionsIfProductExists();
-
       const buy = document.getElementById("buy").value.trim();
       const amazon = document.getElementById("amazon").value.trim();
 
@@ -434,10 +445,25 @@
     function applyAffiliateTag(url) {
       const tag = localStorage.getItem("affiliateId");
       if (!tag) return url;
+      if (url.includes("tag=")) return url;
 
       const separator = url.includes("?") ? "&" : "?";
-      if (url.includes("tag=")) return url;
       return url + separator + "tag=" + encodeURIComponent(tag);
+    }
+
+    function openAmazonSearch() {
+      const product = document.getElementById("productName").value.trim();
+      const code = document.getElementById("barcode").value.trim();
+      const query = product || code;
+
+      if (!query) {
+        alert("Scan a product first");
+        return;
+      }
+
+      const url = applyAffiliateTag("https://www.amazon.co.uk/s?k=" + encodeURIComponent(query));
+      localStorage.setItem("amazonLink", url);
+      window.location.href = url;
     }
 
     function pasteLink() {
@@ -450,54 +476,49 @@
       alert("Affiliate link saved");
     }
 
-    function searchAmazon() {
-      const product = document.getElementById("productName").value.trim();
-      const code = document.getElementById("barcode").value.trim();
-      const query = product || code;
-
-      if (!query) {
-        alert("Scan a product first");
-        return;
-      }
-
-      const url = applyAffiliateTag("https://www.amazon.co.uk/s?k=" + encodeURIComponent(query));
-      localStorage.setItem("amazonLink", url);
-      window.open(url, "_blank");
-    }
-
     function buildContentIdea() {
       const product = document.getElementById("productName").value || "this product";
-      const amazon = document.getElementById("amazon").value || "0";
-
-      return `Content angle: ${product} is selling around £${amazon}. Use it for Amazon finds, quick product reviews, or in-store discovery posts.`;
+      const amazon = document.getElementById("amazon").value || "price not confirmed yet";
+      return `Content angle: ${product} is selling around ${amazon}. Use it for Amazon finds, quick product reviews, or in-store discovery posts.`;
     }
 
     function generateContentIdea() {
       document.getElementById("contentIdea").innerText = buildContentIdea();
       document.getElementById("ideaBox").style.display = "block";
-      showContentActionsIfProductExists();
     }
 
     function generateTikTokCaption() {
-      const product = document.getElementById("productName").value || "This product";
-      const amazon = document.getElementById("amazon").value || "0";
+      const product = document.getElementById("productName").value || "Scanned product";
+      const amazon = document.getElementById("amazon").value || "price not confirmed yet";
 
-      const caption = `🔥 Amazon find\n\n${product}\nAmazon price: £${amazon}\n\nWould you buy this?\n\n#amazonfinds #ukdeals #reseller #dealfinds #tiktokmademebuyit`;
+      document.getElementById("tiktokCaption").value =
+`🔥 Amazon find
 
-      document.getElementById("tiktokCaption").value = caption;
+${product}
+Amazon price: ${amazon}
+
+Would you buy this?
+
+#amazonfinds #ukdeals #reseller #dealfinds #tiktokmademebuyit`;
+
       document.getElementById("tiktokBoxWrap").style.display = "block";
-      showContentActionsIfProductExists();
     }
 
     function generateInstagramCaption() {
-      const product = document.getElementById("productName").value || "This product";
-      const amazon = document.getElementById("amazon").value || "0";
+      const product = document.getElementById("productName").value || "Scanned product";
+      const amazon = document.getElementById("amazon").value || "price not confirmed yet";
 
-      const caption = `Amazon find 👀\n\nProduct: ${product}\nAmazon price: £${amazon}\n\nSaving ideas like this for resale and affiliate content.\n\n#amazonfinds #instagramfinds #ukshopping #dealfinds #resellerlife`;
+      document.getElementById("instagramCaption").value =
+`Amazon find 👀
 
-      document.getElementById("instagramCaption").value = caption;
+Product: ${product}
+Amazon price: ${amazon}
+
+Saving ideas like this for resale and affiliate content.
+
+#amazonfinds #instagramfinds #ukshopping #dealfinds #resellerlife`;
+
       document.getElementById("instagramBoxWrap").style.display = "block";
-      showContentActionsIfProductExists();
     }
 
     function saveAffiliate() {
@@ -573,11 +594,18 @@
       document.getElementById("amazon").value = scannedPrice;
       document.getElementById("affiliateId").value = localStorage.getItem("affiliateId") || "";
 
+      if (scannedBarcode) {
+        document.getElementById("scanMessage").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("scanMessage").style.display = "none";
+        }, 1800);
+      }
+
       if (scannedBarcode && !scannedName) {
         await fetchProduct(scannedBarcode);
       }
 
-      if (scannedBarcode) {
+      if (scannedBarcode && !scannedPrice) {
         await fetchAmazonPrice();
       }
 
