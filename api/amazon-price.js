@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     "50002214": {
       title: "True Aroma Ylang Ylang & Honeysuckle Candle",
       price: 11.00,
-      affiliateUrl: "https://www.amazon.co.uk/s?k=ylang+ylang+honeysuckle+candle",
+      affiliateUrl: "https://www.amazon.co.uk/s?k=True+Aroma+Ylang+Ylang+Honeysuckle+Candle",
       source: "demo"
     },
     "5012345678901": {
@@ -37,12 +37,11 @@ export default async function handler(req, res) {
       return res.status(200).json(demoProducts[barcode]);
     }
 
-    const searchTerm = encodeURIComponent(query || barcode);
-
+    const searchTerm = query || barcode || "";
     return res.status(200).json({
-      title: query || `Retail product (${barcode || ""})`.trim(),
+      title: searchTerm,
       price: null,
-      affiliateUrl: `https://www.amazon.co.uk/s?k=${searchTerm}`,
+      affiliateUrl: `https://www.amazon.co.uk/s?k=${encodeURIComponent(searchTerm)}`,
       source: "fallback-search"
     });
   } catch (error) {
