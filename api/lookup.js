@@ -13,20 +13,20 @@ export default async function handler(req, res) {
 
     if (data.status === 1 && data.product) {
       return res.status(200).json({
-        name: data.product.product_name || `Scanned item ${barcode}`,
+        name: data.product.product_name || `Retail product (${barcode})`,
         brand: data.product.brands || "",
         source: "openfoodfacts"
       });
     }
 
     return res.status(200).json({
-      name: `Scanned item ${barcode}`,
+      name: `Retail product (${barcode})`,
       brand: "",
       source: "fallback"
     });
   } catch (error) {
     return res.status(200).json({
-      name: `Scanned item ${barcode}`,
+      name: `Retail product (${barcode})`,
       brand: "",
       source: "fallback"
     });
