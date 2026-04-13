@@ -54,21 +54,9 @@
       min-width: 130px;
     }
 
-    .start-btn {
-      background: #4CAF50;
-      color: white;
-    }
-
-    .stop-btn {
-      background: #777;
-      color: white;
-    }
-
-    .back-btn {
-      background: #999;
-      color: white;
-      margin-top: 18px;
-    }
+    .start-btn { background: #4CAF50; color: white; }
+    .stop-btn { background: #777; color: white; }
+    .back-btn { background: #999; color: white; margin-top: 18px; }
 
     #status {
       margin-top: 14px;
@@ -100,6 +88,7 @@
     function saveScan(barcode) {
       localStorage.setItem("scannedBarcode", barcode);
       localStorage.removeItem("scannedName");
+      localStorage.removeItem("scannedBrand");
       localStorage.removeItem("scannedPrice");
       localStorage.removeItem("amazonLink");
       window.location.href = "index.html";
@@ -128,10 +117,7 @@
 
         await html5QrCode.start(
           { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 120 }
-          },
+          { fps: 10, qrbox: { width: 250, height: 120 } },
           onScanSuccess
         );
 
