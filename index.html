@@ -29,16 +29,8 @@
       line-height: 1.2;
     }
 
-    h2 {
-      text-align: center;
-      font-size: 26px;
-      font-weight: 800;
-    }
-
-    h3 {
-      font-size: 20px;
-      font-weight: 800;
-    }
+    h2 { text-align: center; font-size: 26px; font-weight: 800; }
+    h3 { font-size: 20px; font-weight: 800; }
 
     label {
       display: block;
@@ -99,6 +91,7 @@
     .scan-btn { background: #4CAF50; color: white; }
     .link-btn { background: #2196F3; color: white; }
     .amazon-btn { background: #009688; color: white; }
+    .manual-btn { background: #5C6BC0; color: white; }
     .idea-btn { background: #E91E63; color: white; }
     .tiktok-btn { background: #111111; color: white; }
     .insta-btn { background: #C13584; color: white; }
@@ -229,6 +222,9 @@
     <label>Product</label>
     <input id="productName" type="text" placeholder="Will fill after scan / lookup" readonly class="readonly" />
 
+    <label>Brand</label>
+    <input id="brandName" type="text" placeholder="Will fill after scan / manual search" readonly class="readonly" />
+
     <label>Barcode</label>
     <input id="barcode" type="text" placeholder="Will fill after scan" readonly class="readonly" />
 
@@ -249,6 +245,10 @@
       <button class="scan-btn" onclick="goToScanner()">📷 Scan</button>
       <button class="link-btn" onclick="pasteLink()">🔗 Add Amazon Link</button>
       <button class="amazon-btn" onclick="openAmazonSearch()">🛒 Amazon</button>
+    </div>
+
+    <div class="row">
+      <button class="manual-btn" onclick="manualLookup()">✍️ Lookup by Name + Brand</button>
     </div>
 
     <div id="scanMessage" class="ok">✅ Scan loaded</div>
@@ -335,12 +335,18 @@
         const data = await res.json();
 
         const name = data.name || fallbackProductName(barcode);
+        const brand = data.brand || "";
+
         document.getElementById("productName").value = name;
+        document.getElementById("brandName").value = brand;
         localStorage.setItem("scannedName", name);
+        localStorage.setItem("scannedBrand", brand);
       } catch (e) {
         const name = fallbackProductName(barcode);
         document.getElementById("productName").value = name;
+        document.getElementById("brandName").value = "";
         localStorage.setItem("scannedName", name);
+        localStorage.setItem("scannedBrand", "");
       }
 
       showContentActionsIfProductExists();
@@ -348,14 +354,14 @@
 
     async function fetchAmazonPrice() {
       const productName = document.getElementById("productName").value.trim();
+      const brandName = document.getElementById("brandName").value.trim();
       const barcode = document.getElementById("barcode").value.trim();
 
       if (!productName && !barcode) return;
 
       try {
-        const url = productName
-          ? `/api/amazon-price?query=${encodeURIComponent(productName)}&barcode=${encodeURIComponent(barcode)}`
-          : `/api/amazon-price?barcode=${encodeURIComponent(barcode)}`;
+        const combinedQuery = [brandName, productName].filter(Boolean).join(" ").trim() || barcode;
+        const url = `/api/amazon-price?query=${encodeURIComponent(combinedQuery)}&barcode=${encodeURIComponent(barcode)}`;
 
         const res = await fetch(url);
         const data = await res.json();
@@ -392,6 +398,42 @@
       } catch (err) {
         console.log("Amazon fallback failed");
       }
+    }
+
+    async function manualLookup() {
+      const currentName = document.getElementById("productName").value.trim();
+      const currentBrand = document.getElementById("brandName").value.trim();
+
+      const name = prompt("Enter product name", currentName || "");
+      if (!name) return;
+
+      const brand = prompt("Enter brand (optional)", currentBrand || "") || "";
+
+      try {
+        const res = await fetch(`/api/search-product?name=${encodeURIComponent(name)}&brand=${encodeURIComponent(brand)}`);
+        const data = await res.json();
+
+        const foundName = data.name || name;
+        const foundBrand = data.brand || brand;
+        const foundBarcode = data.barcode || document.getElementById("barcode").value.trim();
+
+        document.getElementById("productName").value = foundName;
+        document.getElementById("brandName").value = foundBrand;
+        document.getElementById("barcode").value = foundBarcode;
+
+        localStorage.setItem("scannedName", foundName);
+        localStorage.setItem("scannedBrand", foundBrand);
+        localStorage.setItem("scannedBarcode", foundBarcode);
+
+        await fetchAmazonPrice();
+      } catch (error) {
+        document.getElementById("productName").value = name;
+        document.getElementById("brandName").value = brand;
+        localStorage.setItem("scannedName", name);
+        localStorage.setItem("scannedBrand", brand);
+      }
+
+      showContentActionsIfProductExists();
     }
 
     function calculateIfReady() {
@@ -463,8 +505,10 @@
 
     function openAmazonSearch() {
       const product = document.getElementById("productName").value.trim();
+      const brand = document.getElementById("brandName").value.trim();
       const code = document.getElementById("barcode").value.trim();
-      const query = product || code;
+
+      const query = [brand, product].filter(Boolean).join(" ").trim() || code;
 
       if (!query) {
         alert("Scan a product first");
@@ -488,8 +532,11 @@
 
     function buildContentIdea() {
       const product = document.getElementById("productName").value || "this product";
+      const brand = document.getElementById("brandName").value || "";
       const amazon = document.getElementById("amazon").value || "price not confirmed yet";
-      return `Content angle: ${product} is selling around ${amazon}. Use it for Amazon finds, quick product reviews, or in-store discovery posts.`;
+      const displayName = [brand, product].filter(Boolean).join(" ").trim();
+
+      return `Content angle: ${displayName} is selling around ${amazon}. Use it for Amazon finds, quick product reviews, or in-store discovery posts.`;
     }
 
     function generateContentIdea() {
@@ -499,12 +546,14 @@
 
     function generateTikTokCaption() {
       const product = document.getElementById("productName").value || "Scanned product";
+      const brand = document.getElementById("brandName").value || "";
       const amazon = document.getElementById("amazon").value || "price not confirmed yet";
+      const displayName = [brand, product].filter(Boolean).join(" ").trim();
 
       document.getElementById("tiktokCaption").value =
 `🔥 Amazon find
 
-${product}
+${displayName}
 Amazon price: ${amazon}
 
 Would you buy this?
@@ -516,12 +565,14 @@ Would you buy this?
 
     function generateInstagramCaption() {
       const product = document.getElementById("productName").value || "Scanned product";
+      const brand = document.getElementById("brandName").value || "";
       const amazon = document.getElementById("amazon").value || "price not confirmed yet";
+      const displayName = [brand, product].filter(Boolean).join(" ").trim();
 
       document.getElementById("instagramCaption").value =
 `Amazon find 👀
 
-Product: ${product}
+Product: ${displayName}
 Amazon price: ${amazon}
 
 Saving ideas like this for resale and affiliate content.
@@ -533,12 +584,14 @@ Saving ideas like this for resale and affiliate content.
 
     function saveAffiliate() {
       const product = document.getElementById("productName").value || "Unknown Product";
+      const brand = document.getElementById("brandName").value || "";
       const amazon = document.getElementById("amazon").value || "";
       const link = localStorage.getItem("amazonLink") || localStorage.getItem("link") || "";
 
       const list = JSON.parse(localStorage.getItem("aff") || "[]");
       list.unshift({
         name: product,
+        brand: brand,
         price: amazon,
         link: link,
         idea: buildContentIdea()
@@ -564,7 +617,7 @@ Saving ideas like this for resale and affiliate content.
 
       box.innerHTML = list.map(item => `
         <div class="item">
-          <div class="item-title">${item.name}</div>
+          <div class="item-title">${[item.brand, item.name].filter(Boolean).join(" ").trim()}</div>
           <div class="muted">Amazon price: ${item.price ? "£" + item.price : "Not set"}</div>
           <div class="muted">Link: ${item.link || "No affiliate link saved"}</div>
           <div class="muted" style="margin-top:8px;">Idea: ${item.idea || "No idea saved"}</div>
@@ -579,6 +632,7 @@ Saving ideas like this for resale and affiliate content.
 
     function clearForm() {
       document.getElementById("productName").value = "";
+      document.getElementById("brandName").value = "";
       document.getElementById("barcode").value = "";
       document.getElementById("buy").value = "";
       document.getElementById("amazon").value = "";
@@ -590,6 +644,7 @@ Saving ideas like this for resale and affiliate content.
       document.getElementById("instagramBoxWrap").style.display = "none";
       localStorage.removeItem("scannedBarcode");
       localStorage.removeItem("scannedName");
+      localStorage.removeItem("scannedBrand");
       localStorage.removeItem("scannedPrice");
       localStorage.removeItem("amazonLink");
     }
@@ -597,10 +652,12 @@ Saving ideas like this for resale and affiliate content.
     window.onload = async function() {
       const scannedBarcode = localStorage.getItem("scannedBarcode") || "";
       const scannedName = localStorage.getItem("scannedName") || "";
+      const scannedBrand = localStorage.getItem("scannedBrand") || "";
       const scannedPrice = localStorage.getItem("scannedPrice") || "";
 
       document.getElementById("barcode").value = scannedBarcode;
       document.getElementById("productName").value = scannedName;
+      document.getElementById("brandName").value = scannedBrand;
       document.getElementById("amazon").value = scannedPrice;
       document.getElementById("affiliateId").value = localStorage.getItem("affiliateId") || "";
 
@@ -615,10 +672,7 @@ Saving ideas like this for resale and affiliate content.
         await fetchProduct(scannedBarcode);
       }
 
-      if (scannedBarcode && !scannedPrice) {
-        await fetchAmazonPrice();
-      } else if (scannedBarcode) {
-        // Even if price already exists, still try to improve fallback product title
+      if (scannedBarcode) {
         await fetchAmazonPrice();
       }
 
