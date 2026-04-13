@@ -360,7 +360,17 @@
         const res = await fetch(url);
         const data = await res.json();
 
-        if (data.title && (!document.getElementById("productName").value || document.getElementById("productName").value === "Unknown Product")) {
+        const currentName = document.getElementById("productName").value.trim();
+
+        if (
+          data.title &&
+          (
+            !currentName ||
+            currentName === "Unknown Product" ||
+            currentName.startsWith("Retail product (") ||
+            currentName.startsWith("Scanned item ")
+          )
+        ) {
           document.getElementById("productName").value = data.title;
           localStorage.setItem("scannedName", data.title);
         }
@@ -606,6 +616,9 @@ Saving ideas like this for resale and affiliate content.
       }
 
       if (scannedBarcode && !scannedPrice) {
+        await fetchAmazonPrice();
+      } else if (scannedBarcode) {
+        // Even if price already exists, still try to improve fallback product title
         await fetchAmazonPrice();
       }
 
