@@ -7,9 +7,9 @@ export default async function handler(req, res) {
 
   const demoProducts = {
     "50002214": {
-      title: "Scented Candle",
+      title: "True Aroma Ylang Ylang & Honeysuckle Candle",
       price: 11.00,
-      affiliateUrl: "https://www.amazon.co.uk/s?k=scented+candle",
+      affiliateUrl: "https://www.amazon.co.uk/s?k=ylang+ylang+honeysuckle+candle",
       source: "demo"
     },
     "5012345678901": {
@@ -40,14 +40,14 @@ export default async function handler(req, res) {
     const searchTerm = encodeURIComponent(query || barcode);
 
     return res.status(200).json({
-      title: query || `Scanned item ${barcode || ""}`.trim(),
+      title: query || `Retail product (${barcode || ""})`.trim(),
       price: null,
       affiliateUrl: `https://www.amazon.co.uk/s?k=${searchTerm}`,
       source: "fallback-search"
     });
   } catch (error) {
     return res.status(200).json({
-      title: query || `Scanned item ${barcode || ""}`.trim(),
+      title: query || `Retail product (${barcode || ""})`.trim(),
       price: null,
       affiliateUrl: `https://www.amazon.co.uk/s?k=${encodeURIComponent(query || barcode || "")}`,
       source: "fallback-search"
