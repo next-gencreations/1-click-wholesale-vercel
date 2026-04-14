@@ -5,54 +5,183 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>1-Click Profit Finder</title>
 
-  <!-- ✅ PWA -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#6C998A">
 
   <style>
+    * { box-sizing: border-box; }
+
     body {
-      margin:0;
-      padding:20px;
-      font-family: Arial;
-      background:#EEF4F2;
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #EEF4F2;
+      color: #24323D;
     }
 
     .card {
-      max-width:500px;
-      margin:auto;
-      background:white;
-      padding:20px;
-      border-radius:20px;
+      max-width: 520px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
     }
 
-    input {
-      width:100%;
-      padding:10px;
-      margin-bottom:10px;
-      border-radius:10px;
-      border:1px solid #ccc;
+    h2 {
+      text-align: center;
+      margin: 0 0 20px 0;
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    h3 {
+      margin: 18px 0 12px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 700;
+      color: #425564;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .readonly {
+      background: #f7f7f7;
+      color: #666;
+    }
+
+    .switch-row {
+      margin-top: 6px;
+      margin-bottom: 10px;
+      padding: 14px 16px;
+      background: #F7FAF9;
+      border: 1px solid #E0E6E3;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .switch-row span {
+      font-weight: 700;
+      color: #425564;
+    }
+
+    .switch-row input {
+      width: 24px;
+      height: 24px;
+      margin: 0;
     }
 
     button {
-      width:100%;
-      padding:12px;
-      border-radius:10px;
-      border:none;
-      margin-top:8px;
-      font-weight:bold;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      margin-top: 8px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
     }
 
-    .green { background:#4CAF50; color:white; }
-    .blue { background:#2196F3; color:white; }
-    .dark { background:#111; color:white; }
-    .pink { background:#E91E63; color:white; }
+    .green { background: #4CAF50; color: white; }
+    .blue { background: #2196F3; color: white; }
+    .dark { background: #111; color: white; }
+    .pink { background: #E91E63; color: white; }
+    .teal { background: #009688; color: white; }
+    .purple { background: #8E44AD; color: white; }
+    .grey { background: #777; color: white; }
+    .main {
+      background: #6C998A;
+      color: white;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .row button {
+      flex: 1;
+      min-width: 140px;
+      margin-top: 0;
+    }
 
     #result {
-      margin-top:15px;
-      background:#EEF4F2;
-      padding:10px;
-      border-radius:10px;
-      display:none;
+      margin-top: 15px;
+      background: #EEF4F2;
+      padding: 14px;
+      border-radius: 14px;
+      display: none;
+    }
+
+    #scanLoaded {
+      display: none;
+      margin-top: 12px;
+      background: #E6F7EA;
+      color: #207245;
+      border: 1px solid #cdeed5;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #F7FAF9;
+      border: 1px solid #E0E6E3;
+    }
+
+    .item {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid #E0E6E3;
+    }
+
+    .muted {
+      color: #61717B;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .deal-banner {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 900;
+      color: white;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      background: #888;
+    }
+
+    .empty {
+      color: #8a98a1;
     }
   </style>
 </head>
@@ -60,170 +189,412 @@
 <body>
 
 <div class="card">
+  <h2>1-Click Profit Finder</h2>
 
-<h2 style="text-align:center;">1-Click Profit Finder</h2>
+  <label>Product</label>
+  <input id="productName" placeholder="Product" readonly class="readonly">
 
-<input id="productName" placeholder="Product" readonly>
-<input id="brandName" placeholder="Brand" readonly>
-<input id="barcode" placeholder="Barcode" readonly>
+  <label>Brand</label>
+  <input id="brandName" placeholder="Brand" readonly class="readonly">
 
-<input id="buy" type="number" placeholder="Buy Price (£)">
-<input id="amazon" type="number" placeholder="Amazon Price (£)">
+  <label>Barcode</label>
+  <input id="barcode" placeholder="Barcode" readonly class="readonly">
 
-<button onclick="calculate()" style="background:#6C998A;color:white;">Check Profit</button>
+  <label>Buy Price (£)</label>
+  <input id="buy" type="number" step="0.01" placeholder="Buy Price (£)" oninput="calculateIfReady()">
 
-<button class="green" onclick="goScan()">📷 Scan</button>
-<button class="blue" onclick="openAmazon()">🛒 Amazon</button>
-<button class="pink" onclick="manualLookup()">✍️ Manual Lookup</button>
+  <label>Amazon Price (£)</label>
+  <input id="amazon" type="number" step="0.01" placeholder="Amazon Price (£)" oninput="calculateIfReady()">
 
-<div id="result">
-  <p id="profit"></p>
-  <p id="roi"></p>
-  <p id="verdict"></p>
-</div>
+  <div class="switch-row">
+    <span>Include VAT estimate (20%)</span>
+    <input id="vatToggle" type="checkbox" onchange="calculateIfReady()">
+  </div>
 
-<hr>
+  <button class="main" onclick="calculate()">Check Profit</button>
 
-<button onclick="idea()">💡 Idea</button>
-<button class="dark" onclick="tiktok()">🎥 TikTok</button>
-<button class="pink" onclick="insta()">📸 Instagram</button>
+  <div class="row">
+    <button class="green" onclick="goScan()">📷 Scan</button>
+    <button class="blue" onclick="pasteLink()">🔗 Add Amazon Link</button>
+  </div>
 
-<textarea id="output" style="margin-top:10px;"></textarea>
+  <div class="row">
+    <button class="teal" onclick="openAmazon()">🛒 Amazon</button>
+    <button class="pink" onclick="manualLookup()">✍️ Manual Lookup</button>
+  </div>
 
+  <div id="scanLoaded">✅ Scan loaded</div>
+
+  <div id="result">
+    <div id="dealBanner" class="deal-banner">RESULT</div>
+    <p id="profit"></p>
+    <p id="roi"></p>
+    <p id="fee"></p>
+    <p id="vatLine"></p>
+    <p id="netAfter"></p>
+    <p id="verdict"></p>
+  </div>
+
+  <div class="section">
+    <h3>Content Tools</h3>
+
+    <div class="row">
+      <button onclick="idea()">💡 Idea</button>
+      <button class="dark" onclick="tiktok()">🎥 TikTok</button>
+      <button class="pink" onclick="insta()">📸 Instagram</button>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="purple" onclick="saveAffiliate()">💰 Save Affiliate</button>
+      <button class="grey" onclick="clearAll()">🗑 Clear</button>
+    </div>
+
+    <textarea id="output" style="margin-top:12px;" placeholder="Generated content appears here"></textarea>
+  </div>
+
+  <div class="section">
+    <h3>Affiliate Products</h3>
+    <div id="affiliateList" class="empty">No affiliate products saved yet.</div>
+  </div>
+
+  <div class="section">
+    <h3>Amazon Settings</h3>
+    <label>Affiliate ID</label>
+    <input id="affiliateId" placeholder="yourtag-21">
+    <button class="main" onclick="saveSettings()">Save Settings</button>
+  </div>
 </div>
 
 <script>
-
-// SCAN PAGE
-function goScan(){
-  window.location.href="barcode-scanner.html";
+function goScan() {
+  window.location.href = "barcode-scanner.html";
 }
 
-// LOAD DATA
+function fallbackProductName(barcode) {
+  return barcode ? `Retail product (${barcode})` : "Unknown Product";
+}
+
+function applyAffiliateTag(url) {
+  const tag = localStorage.getItem("affiliateId") || "";
+  if (!tag) return url;
+  if (url.includes("tag=")) return url;
+
+  const separator = url.includes("?") ? "&" : "?";
+  return url + separator + "tag=" + encodeURIComponent(tag);
+}
+
 window.onload = async () => {
   const barcode = localStorage.getItem("scannedBarcode") || "";
+  const scannedName = localStorage.getItem("scannedName") || "";
+  const scannedBrand = localStorage.getItem("scannedBrand") || "";
+  const scannedPrice = localStorage.getItem("scannedPrice") || "";
+  const savedAffiliateId = localStorage.getItem("affiliateId") || "";
 
-  if(barcode){
-    document.getElementById("barcode").value = barcode;
+  document.getElementById("barcode").value = barcode;
+  document.getElementById("productName").value = scannedName;
+  document.getElementById("brandName").value = scannedBrand;
+  document.getElementById("amazon").value = scannedPrice;
+  document.getElementById("affiliateId").value = savedAffiliateId;
 
-    await fetchProduct(barcode);
-    await fetchAmazon(barcode);
+  if (barcode) {
+    document.getElementById("scanLoaded").style.display = "block";
+    setTimeout(() => {
+      document.getElementById("scanLoaded").style.display = "none";
+    }, 1800);
+
+    if (!scannedName) {
+      await fetchProduct(barcode);
+    }
+
+    await fetchAmazon(barcode, false);
   }
+
+  renderAffiliateList();
 };
 
-// PRODUCT LOOKUP
-async function fetchProduct(barcode){
-  try{
-    const res = await fetch(`/api/lookup?barcode=${barcode}`);
+async function fetchProduct(barcode) {
+  try {
+    const res = await fetch(`/api/lookup?barcode=${encodeURIComponent(barcode)}`);
     const data = await res.json();
 
-    document.getElementById("productName").value = data.name || "Retail product";
-    document.getElementById("brandName").value = data.brand || "";
+    const name = data.name || fallbackProductName(barcode);
+    const brand = data.brand || "";
 
-  }catch{
-    document.getElementById("productName").value = "Retail product";
+    document.getElementById("productName").value = name;
+    document.getElementById("brandName").value = brand;
+
+    localStorage.setItem("scannedName", name);
+    localStorage.setItem("scannedBrand", brand);
+  } catch (e) {
+    const name = fallbackProductName(barcode);
+    document.getElementById("productName").value = name;
+    document.getElementById("brandName").value = "";
+
+    localStorage.setItem("scannedName", name);
+    localStorage.setItem("scannedBrand", "");
   }
 }
 
-// AMAZON LOOKUP
-async function fetchAmazon(barcode){
-  try{
-    const res = await fetch(`/api/amazon-price?barcode=${barcode}`);
+async function fetchAmazon(searchValue, isManual = false) {
+  try {
+    const endpoint = isManual
+      ? `/api/amazon-price?query=${encodeURIComponent(searchValue)}`
+      : `/api/amazon-price?barcode=${encodeURIComponent(searchValue)}`;
+
+    const res = await fetch(endpoint);
     const data = await res.json();
 
-    if(data.price){
-      document.getElementById("amazon").value = data.price;
-    }
+    const currentName = document.getElementById("productName").value.trim();
 
-    if(data.title){
+    if (
+      data.title &&
+      (
+        !currentName ||
+        currentName === "Unknown Product" ||
+        currentName.startsWith("Retail product (") ||
+        currentName.startsWith("Scanned item ")
+      )
+    ) {
       document.getElementById("productName").value = data.title;
+      localStorage.setItem("scannedName", data.title);
     }
 
-  }catch{}
+    if (data.price !== null && data.price !== undefined) {
+      const price = Number(data.price).toFixed(2);
+      document.getElementById("amazon").value = price;
+      localStorage.setItem("scannedPrice", price);
+    }
+
+    if (data.affiliateUrl) {
+      const tagged = applyAffiliateTag(data.affiliateUrl);
+      localStorage.setItem("amazonLink", tagged);
+    }
+  } catch (e) {
+    console.log("Amazon lookup failed", e);
+  }
 }
 
-// AMAZON BUTTON
-function openAmazon(){
-  const name = document.getElementById("productName").value;
-  const url = "https://www.amazon.co.uk/s?k=" + encodeURIComponent(name);
+function openAmazon() {
+  const productName = document.getElementById("productName").value.trim();
+  const brandName = document.getElementById("brandName").value.trim();
+  const barcode = document.getElementById("barcode").value.trim();
+
+  const query = [brandName, productName].filter(Boolean).join(" ").trim() || barcode;
+
+  if (!query) {
+    alert("Scan a product first");
+    return;
+  }
+
+  const url = applyAffiliateTag("https://www.amazon.co.uk/s?k=" + encodeURIComponent(query));
+  localStorage.setItem("amazonLink", url);
   window.location.href = url;
 }
 
-// MANUAL LOOKUP
-async function manualLookup(){
-  const name = prompt("Product name?");
-  const brand = prompt("Brand?");
+async function manualLookup() {
+  const currentName = document.getElementById("productName").value.trim();
+  const currentBrand = document.getElementById("brandName").value.trim();
 
-  if(!name) return;
+  const name = prompt("Product name?", currentName || "");
+  if (!name) return;
+
+  const brand = prompt("Brand?", currentBrand || "") || "";
 
   document.getElementById("productName").value = name;
-  document.getElementById("brandName").value = brand || "";
+  document.getElementById("brandName").value = brand;
 
-  const url = `/api/search-product?name=${name}&brand=${brand}`;
-  const res = await fetch(url);
-  const data = await res.json();
+  try {
+    const url = `/api/search-product?name=${encodeURIComponent(name)}&brand=${encodeURIComponent(brand)}`;
+    const res = await fetch(url);
+    const data = await res.json();
 
-  if(data.barcode){
-    document.getElementById("barcode").value = data.barcode;
+    const foundName = data.name || name;
+    const foundBrand = data.brand || brand;
+    const foundBarcode = data.barcode || "";
+
+    document.getElementById("productName").value = foundName;
+    document.getElementById("brandName").value = foundBrand;
+
+    if (foundBarcode) {
+      document.getElementById("barcode").value = foundBarcode;
+      localStorage.setItem("scannedBarcode", foundBarcode);
+    }
+
+    localStorage.setItem("scannedName", foundName);
+    localStorage.setItem("scannedBrand", foundBrand);
+
+    await fetchAmazon([foundBrand, foundName].filter(Boolean).join(" "), true);
+  } catch (e) {
+    await fetchAmazon([brand, name].filter(Boolean).join(" "), true);
   }
-
-  fetchAmazon(name);
 }
 
-// CALCULATOR
-function calculate(){
+function calculateIfReady() {
+  const buy = document.getElementById("buy").value.trim();
+  const amazon = document.getElementById("amazon").value.trim();
+
+  if (buy !== "" && amazon !== "") {
+    calculate();
+  }
+}
+
+function calculate() {
   const buy = parseFloat(document.getElementById("buy").value);
   const amazon = parseFloat(document.getElementById("amazon").value);
+  const vatOn = document.getElementById("vatToggle").checked;
 
-  if(!buy || !amazon) return;
+  if (isNaN(buy) || isNaN(amazon) || buy <= 0 || amazon <= 0) {
+    alert("Enter both Buy Price and Amazon Price");
+    return;
+  }
 
   const fee = amazon * 0.15;
-  const profit = amazon - fee - buy;
-  const roi = ((profit / buy)*100).toFixed(1);
+  const vat = vatOn ? amazon * 0.20 : 0;
+  const netAfter = amazon - fee - vat;
+  const profit = netAfter - buy;
+  const roi = ((profit / buy) * 100);
 
-  document.getElementById("profit").innerText = "Profit £" + profit.toFixed(2);
-  document.getElementById("roi").innerText = "ROI " + roi + "%";
+  document.getElementById("profit").innerText = "Profit: £" + profit.toFixed(2);
+  document.getElementById("roi").innerText = "ROI: " + roi.toFixed(1) + "%";
+  document.getElementById("fee").innerText = "Referral Fee: £" + fee.toFixed(2);
+  document.getElementById("vatLine").innerText = vatOn ? "VAT Estimate: £" + vat.toFixed(2) : "VAT Estimate: Off";
+  document.getElementById("netAfter").innerText = "Net After Fees: £" + netAfter.toFixed(2);
 
-  let verdict = "Skip";
-  if(roi > 40) verdict = "🔥 BUY";
-  else if(roi > 20) verdict = "👍 Maybe";
+  const banner = document.getElementById("dealBanner");
+  const verdict = document.getElementById("verdict");
 
-  document.getElementById("verdict").innerText = verdict;
-  document.getElementById("result").style.display="block";
+  if (profit > 3 && roi >= 35) {
+    banner.innerText = "BUY";
+    banner.style.background = "#2E7D32";
+    verdict.innerText = "🔥 Strong deal";
+  } else if (profit > 0 && roi >= 15) {
+    banner.innerText = "MAYBE";
+    banner.style.background = "#F9A825";
+    verdict.innerText = "👍 Possible deal";
+  } else {
+    banner.innerText = "SKIP";
+    banner.style.background = "#C62828";
+    verdict.innerText = "❌ Too weak after fees";
+  }
+
+  document.getElementById("result").style.display = "block";
 }
 
-// CONTENT
-function idea(){
-  const name = document.getElementById("productName").value;
+function buildDisplayName() {
+  const product = document.getElementById("productName").value.trim();
+  const brand = document.getElementById("brandName").value.trim();
+  return [brand, product].filter(Boolean).join(" ").trim() || "this product";
+}
+
+function idea() {
+  const name = buildDisplayName();
+  const amazon = document.getElementById("amazon").value.trim() || "price not confirmed yet";
   document.getElementById("output").value =
-  `${name} — found this in store, worth checking online`;
+`${name} — found this in store. Amazon price: ${amazon}. Worth checking for resale or affiliate content.`;
 }
 
-function tiktok(){
-  const name = document.getElementById("productName").value;
+function tiktok() {
+  const name = buildDisplayName();
+  const amazon = document.getElementById("amazon").value.trim() || "price not confirmed yet";
   document.getElementById("output").value =
 `🔥 Amazon find
 
 ${name}
+Amazon price: ${amazon}
 
-#amazonfinds #reseller`;
+Would you buy this?
+
+#amazonfinds #reseller #ukdeals #dealfinds`;
 }
 
-function insta(){
-  const name = document.getElementById("productName").value;
+function insta() {
+  const name = buildDisplayName();
+  const amazon = document.getElementById("amazon").value.trim() || "price not confirmed yet";
   document.getElementById("output").value =
 `Amazon find 👀
 
 ${name}
+Amazon price: ${amazon}
 
-#amazonfinds`;
+#amazonfinds #instagramfinds #resellerlife`;
 }
 
-// SERVICE WORKER
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("/service-worker.js");
+function saveAffiliate() {
+  const name = document.getElementById("productName").value.trim() || "Unknown Product";
+  const brand = document.getElementById("brandName").value.trim() || "";
+  const amazon = document.getElementById("amazon").value.trim() || "";
+  const link = localStorage.getItem("amazonLink") || "";
+
+  const list = JSON.parse(localStorage.getItem("aff") || "[]");
+  list.unshift({
+    name,
+    brand,
+    price: amazon,
+    link,
+    idea: document.getElementById("output").value.trim() || ""
+  });
+
+  localStorage.setItem("aff", JSON.stringify(list.slice(0, 20)));
+  renderAffiliateList();
+  alert("Affiliate product saved");
 }
 
+function renderAffiliateList() {
+  const list = JSON.parse(localStorage.getItem("aff") || "[]");
+  const box = document.getElementById("affiliateList");
+
+  if (!list.length) {
+    box.innerHTML = '<div class="empty">No affiliate products saved yet.</div>';
+    return;
+  }
+
+  box.innerHTML = list.map(item => `
+    <div class="item">
+      <strong>${[item.brand, item.name].filter(Boolean).join(" ").trim()}</strong><br>
+      <div class="muted">Amazon price: ${item.price ? "£" + item.price : "Not set"}</div>
+      <div class="muted">Link: ${item.link || "No affiliate link saved"}</div>
+      <div class="muted">Idea: ${item.idea || "No content saved"}</div>
+    </div>
+  `).join("");
+}
+
+function saveSettings() {
+  const id = document.getElementById("affiliateId").value.trim();
+  localStorage.setItem("affiliateId", id);
+  alert("Settings saved");
+}
+
+function pasteLink() {
+  const link = prompt("Paste Amazon product link");
+  if (!link) return;
+
+  const tagged = applyAffiliateTag(link);
+  localStorage.setItem("amazonLink", tagged);
+  alert("Affiliate link saved");
+}
+
+function clearAll() {
+  document.getElementById("productName").value = "";
+  document.getElementById("brandName").value = "";
+  document.getElementById("barcode").value = "";
+  document.getElementById("buy").value = "";
+  document.getElementById("amazon").value = "";
+  document.getElementById("output").value = "";
+  document.getElementById("vatToggle").checked = false;
+  document.getElementById("result").style.display = "none";
+
+  localStorage.removeItem("scannedBarcode");
+  localStorage.removeItem("scannedName");
+  localStorage.removeItem("scannedBrand");
+  localStorage.removeItem("scannedPrice");
+  localStorage.removeItem("amazonLink");
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker.js")
+    .then(() => console.log("Service Worker Registered"))
+    .catch((err) => console.log("Service Worker Failed", err));
+}
 </script>
 
 </body>
