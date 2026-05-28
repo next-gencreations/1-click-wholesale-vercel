@@ -352,45 +352,7 @@ function goScan(){
 
   navigator.vibrate?.(200);
 }
-
-  const fee=amazon*0.15;
-  const vat=vatOn ? amazon*0.20 : 0;
-
-  const profit=amazon-fee-vat-buy;
-  const roi=(profit/buy)*100;
-
-  const card=document.getElementById("resultCard");
-  const title=document.getElementById("resultTitle");
-
-  if(profit>3 && roi>35){
-    card.className="resultCard buy";
-    title.innerText="🔥 BUY";
-  }
-  else if(profit>0){
-    card.className="resultCard maybe";
-    title.innerText="⚠️ MAYBE";
-  }
-  else{
-    card.className="resultCard skip";
-    title.innerText="❌ SKIP";
-  }
-
-  document.getElementById("profitText").innerText=
-    "Profit: £"+profit.toFixed(2);
-
-  document.getElementById("roiText").innerText=
-    "ROI: "+roi.toFixed(1)+"%";
-
-  document.getElementById("feeText").innerText=
-    "Amazon Fee: £"+fee.toFixed(2);
-
-  document.getElementById("vatText").innerText=
-    vatOn ? "VAT Estimate: £"+vat.toFixed(2) : "VAT Estimate: OFF";
-
-  document.getElementById("verdictText").innerText=
-    profit>0 ? "Potential winning product" : "Too weak after fees";
-
-  card.style.display="block";
+").in
 }
 
 function openAmazon(){
