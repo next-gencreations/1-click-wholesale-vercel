@@ -23,49 +23,91 @@
       max-width: 520px;
       margin: auto;
       background: white;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      padding: 22px;
+      border-radius: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
     h2 {
       text-align: center;
-      margin: 0 0 20px 0;
-      font-size: 26px;
-      font-weight: 800;
+      margin: 0 0 6px 0;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .tagline {
+      text-align: center;
+      color: #61717B;
+      margin-bottom: 18px;
+      font-weight: 700;
     }
 
     h3 {
       margin: 18px 0 12px;
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     label {
       display: block;
       margin: 12px 0 6px;
-      font-weight: 700;
+      font-weight: 800;
       color: #425564;
     }
 
-    input, textarea {
+    input {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       margin-bottom: 10px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid #ccc;
-      font-size: 16px;
+      font-size: 17px;
       outline: none;
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
     }
 
     .readonly {
       background: #f7f7f7;
-      color: #666;
+      color: #555;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border-radius: 14px;
+      border: none;
+      margin-top: 8px;
+      font-weight: 900;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    .green { background: #4CAF50; color: white; }
+    .blue { background: #2196F3; color: white; }
+    .pink { background: #E91E63; color: white; }
+    .purple { background: #8E44AD; color: white; }
+    .grey { background: #777; color: white; }
+    .main { background: #6C998A; color: white; }
+    .black { background: #111; color: white; }
+
+    .scanHero {
+      background: #4CAF50;
+      color: white;
+      font-size: 22px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .row button {
+      flex: 1;
+      min-width: 140px;
+      margin-top: 0;
     }
 
     .switch-row {
@@ -82,7 +124,7 @@
     }
 
     .switch-row span {
-      font-weight: 700;
+      font-weight: 800;
       color: #425564;
     }
 
@@ -92,65 +134,42 @@
       margin: 0;
     }
 
-    button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      margin-top: 8px;
-      font-weight: 800;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .green { background: #4CAF50; color: white; }
-    .blue { background: #2196F3; color: white; }
-    .dark { background: #111; color: white; }
-    .pink { background: #E91E63; color: white; }
-    .teal { background: #009688; color: white; }
-    .purple { background: #8E44AD; color: white; }
-    .grey { background: #777; color: white; }
-    .main {
-      background: #6C998A;
-      color: white;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .row button {
-      flex: 1;
-      min-width: 140px;
-      margin-top: 0;
-    }
-
     #result {
-      margin-top: 15px;
+      margin-top: 18px;
       background: #EEF4F2;
-      padding: 14px;
-      border-radius: 14px;
+      padding: 16px;
+      border-radius: 18px;
       display: none;
+      text-align: center;
     }
 
-    #scanLoaded {
-      display: none;
-      margin-top: 12px;
-      background: #E6F7EA;
-      color: #207245;
-      border: 1px solid #cdeed5;
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-weight: 700;
+    .deal-banner {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 1000;
+      color: white;
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      background: #888;
+    }
+
+    .money {
+      font-size: 32px;
+      font-weight: 1000;
+      margin: 10px 0;
+    }
+
+    .stat {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 8px 0;
     }
 
     .section {
       margin-top: 18px;
       padding: 16px;
-      border-radius: 16px;
+      border-radius: 18px;
       background: #F7FAF9;
       border: 1px solid #E0E6E3;
     }
@@ -169,19 +188,20 @@
       word-break: break-word;
     }
 
-    .deal-banner {
-      text-align: center;
-      font-size: 24px;
-      font-weight: 900;
-      color: white;
-      padding: 14px;
-      border-radius: 14px;
-      margin-bottom: 12px;
-      background: #888;
-    }
-
     .empty {
       color: #8a98a1;
+    }
+
+    #scanLoaded {
+      display: none;
+      margin-top: 12px;
+      background: #E6F7EA;
+      color: #207245;
+      border: 1px solid #cdeed5;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-align: center;
     }
   </style>
 </head>
@@ -190,6 +210,9 @@
 
 <div class="card">
   <h2>1-Click Profit Finder</h2>
+  <div class="tagline">Scan products. Check profit. Save winners.</div>
+
+  <button class="scanHero" onclick="goScan()">📷 Scan Product</button>
 
   <label>Product</label>
   <input id="productName" placeholder="Product" readonly class="readonly">
@@ -203,23 +226,18 @@
   <label>Buy Price (£)</label>
   <input id="buy" type="number" step="0.01" placeholder="Buy Price (£)" oninput="calculateIfReady()">
 
-  <label>Amazon Price (£)</label>
-  <input id="amazon" type="number" step="0.01" placeholder="Amazon Price (£)" oninput="calculateIfReady()">
+  <label>Sell Price (£)</label>
+  <input id="amazon" type="number" step="0.01" placeholder="Sell Price (£)" oninput="calculateIfReady()">
 
   <div class="switch-row">
     <span>Include VAT estimate (20%)</span>
     <input id="vatToggle" type="checkbox" onchange="calculateIfReady()">
   </div>
 
-  <button class="main" onclick="calculate()">Check Profit</button>
+  <button class="main" onclick="calculate()">💰 Check Profit</button>
 
   <div class="row">
-    <button class="green" onclick="goScan()">📷 Scan</button>
-    <button class="blue" onclick="pasteLink()">🔗 Add Amazon Link</button>
-  </div>
-
-  <div class="row">
-    <button class="teal" onclick="openAmazon()">🛒 Amazon</button>
+    <button class="blue" onclick="openAmazon()">🛒 Search Amazon</button>
     <button class="pink" onclick="manualLookup()">✍️ Manual Lookup</button>
   </div>
 
@@ -227,34 +245,30 @@
 
   <div id="result">
     <div id="dealBanner" class="deal-banner">RESULT</div>
-    <p id="profit"></p>
-    <p id="roi"></p>
-    <p id="fee"></p>
-    <p id="vatLine"></p>
-    <p id="netAfter"></p>
-    <p id="verdict"></p>
+    <p id="profit" class="money"></p>
+    <p id="roi" class="stat"></p>
+    <p id="fee" class="stat"></p>
+    <p id="vatLine" class="stat"></p>
+    <p id="netAfter" class="stat"></p>
+    <p id="verdict" class="stat"></p>
   </div>
 
   <div class="section">
-    <h3>Content Tools</h3>
+    <h3>Saved Finds</h3>
 
     <div class="row">
-      <button onclick="idea()">💡 Idea</button>
-      <button class="dark" onclick="tiktok()">🎥 TikTok</button>
-      <button class="pink" onclick="insta()">📸 Instagram</button>
-    </div>
-
-    <div class="row" style="margin-top:10px;">
-      <button class="purple" onclick="saveAffiliate()">💰 Save Affiliate</button>
+      <button class="purple" onclick="saveAffiliate()">⭐ Save Scan</button>
       <button class="grey" onclick="clearAll()">🗑 Clear</button>
     </div>
 
-    <textarea id="output" style="margin-top:12px;" placeholder="Generated content appears here"></textarea>
+    <div class="muted" style="margin-top:14px;font-weight:700;">
+      Save profitable products and build your reseller history.
+    </div>
   </div>
 
   <div class="section">
-    <h3>Affiliate Products</h3>
-    <div id="affiliateList" class="empty">No affiliate products saved yet.</div>
+    <h3>Recent Saved Products</h3>
+    <div id="affiliateList" class="empty">No products saved yet.</div>
   </div>
 
   <div class="section">
@@ -444,7 +458,7 @@ function calculate() {
   const vatOn = document.getElementById("vatToggle").checked;
 
   if (isNaN(buy) || isNaN(amazon) || buy <= 0 || amazon <= 0) {
-    alert("Enter both Buy Price and Amazon Price");
+    alert("Enter both Buy Price and Sell Price");
     return;
   }
 
@@ -454,25 +468,25 @@ function calculate() {
   const profit = netAfter - buy;
   const roi = ((profit / buy) * 100);
 
-  document.getElementById("profit").innerText = "Profit: £" + profit.toFixed(2);
+  document.getElementById("profit").innerText = "£" + profit.toFixed(2) + " Profit";
   document.getElementById("roi").innerText = "ROI: " + roi.toFixed(1) + "%";
-  document.getElementById("fee").innerText = "Referral Fee: £" + fee.toFixed(2);
-  document.getElementById("vatLine").innerText = vatOn ? "VAT Estimate: £" + vat.toFixed(2) : "VAT Estimate: Off";
-  document.getElementById("netAfter").innerText = "Net After Fees: £" + netAfter.toFixed(2);
+  document.getElementById("fee").innerText = "Estimated fee: £" + fee.toFixed(2);
+  document.getElementById("vatLine").innerText = vatOn ? "VAT estimate: £" + vat.toFixed(2) : "VAT estimate: Off";
+  document.getElementById("netAfter").innerText = "Net after fees: £" + netAfter.toFixed(2);
 
   const banner = document.getElementById("dealBanner");
   const verdict = document.getElementById("verdict");
 
   if (profit > 3 && roi >= 35) {
-    banner.innerText = "BUY";
+    banner.innerText = "🟢 BUY";
     banner.style.background = "#2E7D32";
-    verdict.innerText = "🔥 Strong deal";
+    verdict.innerText = "🔥 Strong deal — worth buying";
   } else if (profit > 0 && roi >= 15) {
-    banner.innerText = "MAYBE";
+    banner.innerText = "🟠 MAYBE";
     banner.style.background = "#F9A825";
-    verdict.innerText = "👍 Possible deal";
+    verdict.innerText = "👍 Possible deal — check demand first";
   } else {
-    banner.innerText = "SKIP";
+    banner.innerText = "🔴 SKIP";
     banner.style.background = "#C62828";
     verdict.innerText = "❌ Too weak after fees";
   }
@@ -480,63 +494,35 @@ function calculate() {
   document.getElementById("result").style.display = "block";
 }
 
-function buildDisplayName() {
-  const product = document.getElementById("productName").value.trim();
-  const brand = document.getElementById("brandName").value.trim();
-  return [brand, product].filter(Boolean).join(" ").trim() || "this product";
-}
-
-function idea() {
-  const name = buildDisplayName();
-  const amazon = document.getElementById("amazon").value.trim() || "price not confirmed yet";
-  document.getElementById("output").value =
-`${name} — found this in store. Amazon price: ${amazon}. Worth checking for resale or affiliate content.`;
-}
-
-function tiktok() {
-  const name = buildDisplayName();
-  const amazon = document.getElementById("amazon").value.trim() || "price not confirmed yet";
-  document.getElementById("output").value =
-`🔥 Amazon find
-
-${name}
-Amazon price: ${amazon}
-
-Would you buy this?
-
-#amazonfinds #reseller #ukdeals #dealfinds`;
-}
-
-function insta() {
-  const name = buildDisplayName();
-  const amazon = document.getElementById("amazon").value.trim() || "price not confirmed yet";
-  document.getElementById("output").value =
-`Amazon find 👀
-
-${name}
-Amazon price: ${amazon}
-
-#amazonfinds #instagramfinds #resellerlife`;
-}
-
 function saveAffiliate() {
   const name = document.getElementById("productName").value.trim() || "Unknown Product";
   const brand = document.getElementById("brandName").value.trim() || "";
+  const barcode = document.getElementById("barcode").value.trim() || "";
+  const buy = document.getElementById("buy").value.trim() || "";
   const amazon = document.getElementById("amazon").value.trim() || "";
   const link = localStorage.getItem("amazonLink") || "";
+
+  const profitText = document.getElementById("profit").innerText || "";
+  const roiText = document.getElementById("roi").innerText || "";
+  const verdictText = document.getElementById("dealBanner").innerText || "";
 
   const list = JSON.parse(localStorage.getItem("aff") || "[]");
   list.unshift({
     name,
     brand,
+    barcode,
+    buy,
     price: amazon,
+    profit: profitText,
+    roi: roiText,
+    verdict: verdictText,
     link,
-    idea: document.getElementById("output").value.trim() || ""
+    date: new Date().toLocaleString()
   });
 
-  localStorage.setItem("aff", JSON.stringify(list.slice(0, 20)));
+  localStorage.setItem("aff", JSON.stringify(list.slice(0, 30)));
   renderAffiliateList();
-  alert("Affiliate product saved");
+  alert("Scan saved");
 }
 
 function renderAffiliateList() {
@@ -544,16 +530,18 @@ function renderAffiliateList() {
   const box = document.getElementById("affiliateList");
 
   if (!list.length) {
-    box.innerHTML = '<div class="empty">No affiliate products saved yet.</div>';
+    box.innerHTML = '<div class="empty">No products saved yet.</div>';
     return;
   }
 
   box.innerHTML = list.map(item => `
     <div class="item">
       <strong>${[item.brand, item.name].filter(Boolean).join(" ").trim()}</strong><br>
-      <div class="muted">Amazon price: ${item.price ? "£" + item.price : "Not set"}</div>
-      <div class="muted">Link: ${item.link || "No affiliate link saved"}</div>
-      <div class="muted">Idea: ${item.idea || "No content saved"}</div>
+      <div class="muted">${item.verdict || ""}</div>
+      <div class="muted">${item.profit || ""} ${item.roi ? "· " + item.roi : ""}</div>
+      <div class="muted">Buy: ${item.buy ? "£" + item.buy : "Not set"} · Sell: ${item.price ? "£" + item.price : "Not set"}</div>
+      <div class="muted">Barcode: ${item.barcode || "None"}</div>
+      <div class="muted">Saved: ${item.date || ""}</div>
     </div>
   `).join("");
 }
@@ -564,22 +552,12 @@ function saveSettings() {
   alert("Settings saved");
 }
 
-function pasteLink() {
-  const link = prompt("Paste Amazon product link");
-  if (!link) return;
-
-  const tagged = applyAffiliateTag(link);
-  localStorage.setItem("amazonLink", tagged);
-  alert("Affiliate link saved");
-}
-
 function clearAll() {
   document.getElementById("productName").value = "";
   document.getElementById("brandName").value = "";
   document.getElementById("barcode").value = "";
   document.getElementById("buy").value = "";
   document.getElementById("amazon").value = "";
-  document.getElementById("output").value = "";
   document.getElementById("vatToggle").checked = false;
   document.getElementById("result").style.display = "none";
 
