@@ -6,10 +6,7 @@
 <title>1-Click Profit Finder</title>
 
 <style>
-
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -28,11 +25,7 @@ body{
   box-shadow:0 12px 40px rgba(0,0,0,0.10);
 }
 
-.logo{
-  text-align:center;
-  font-size:62px;
-  margin-bottom:6px;
-}
+.logo{text-align:center;font-size:60px;margin-bottom:6px}
 
 h1{
   text-align:center;
@@ -63,8 +56,15 @@ h1{
   box-shadow:0 8px 24px rgba(54,201,93,0.35);
 }
 
-.scanButton:active{
-  transform:scale(0.98);
+.status{
+  margin-top:14px;
+  padding:12px;
+  border-radius:16px;
+  background:#F7FAF9;
+  color:#55796D;
+  font-weight:900;
+  text-align:center;
+  display:none;
 }
 
 label{
@@ -128,21 +128,11 @@ input{
   color:white;
 }
 
-.amazon{
-  background:#2196F3;
-}
-
-.manual{
-  background:#E91E63;
-}
-
-.save{
-  background:#8E44AD;
-}
-
-.clear{
-  background:#666;
-}
+.amazon{background:#2196F3}
+.manual{background:#E91E63}
+.lookup{background:#009688}
+.save{background:#8E44AD}
+.clear{background:#666}
 
 .resultCard{
   margin-top:26px;
@@ -154,14 +144,8 @@ input{
 }
 
 @keyframes pop{
-  from{
-    transform:scale(0.92);
-    opacity:0;
-  }
-  to{
-    transform:scale(1);
-    opacity:1;
-  }
+  from{transform:scale(0.92);opacity:0}
+  to{transform:scale(1);opacity:1}
 }
 
 .resultCard h2{
@@ -246,7 +230,6 @@ input{
 .buyText{color:#1E7A36}
 .maybeText{color:#D98A00}
 .skipText{color:#C62828}
-
 </style>
 </head>
 
@@ -258,110 +241,217 @@ input{
 
 <h1>1-Click Profit Finder</h1>
 
-<div class="sub">
-Scan products. Check profit. Save winners.
-</div>
+<div class="sub">Scan products. Check profit. Save winners.</div>
 
-<button class="scanButton" onclick="goScan()">
-📷 SCAN PRODUCT
-</button>
+<button class="scanButton" onclick="goScan()">📷 SCAN PRODUCT</button>
+
+<div id="status" class="status"></div>
 
 <label>Product</label>
-<input id="productName">
+<input id="productName" placeholder="Product name">
 
 <label>Brand</label>
-<input id="brandName">
+<input id="brandName" placeholder="Brand">
 
 <label>Barcode</label>
-<input id="barcode">
+<input id="barcode" placeholder="Barcode">
 
-<label>Buy Price (£)</label>
-<input id="buy" type="number">
+<label>Shop Buy Price (£)</label>
+<input id="buy" type="number" step="0.01" placeholder="Shelf / clearance price">
 
-<label>Sell Price (£)</label>
-<input id="amazon" type="number">
+<label>Amazon Sell Price (£)</label>
+<input id="amazon" type="number" step="0.01" placeholder="Auto or manual Amazon price">
 
 <div class="switch">
 <span>Include VAT estimate (20%)</span>
 <input id="vatToggle" type="checkbox">
 </div>
 
-<button class="mainButton" onclick="calculate()">
-💰 CHECK PROFIT
-</button>
+<button class="mainButton" onclick="calculate()">💰 CHECK PROFIT</button>
 
 <div class="row">
-<button class="amazon" onclick="openAmazon()">
-🛒 AMAZON
-</button>
+<button class="lookup" onclick="lookupNow()">🔎 LOOKUP</button>
+<button class="amazon" onclick="openAmazon()">🛒 AMAZON</button>
+</div>
 
-<button class="manual" onclick="manualLookup()">
-✍️ MANUAL
-</button>
+<div class="row">
+<button class="manual" onclick="manualLookup()">✍️ MANUAL</button>
+<button class="clear" onclick="clearAll()">🗑 CLEAR</button>
 </div>
 
 <div id="resultCard" class="resultCard">
-
 <h2 id="resultTitle">WINNER</h2>
-
 <p id="profitText"></p>
 <p id="roiText"></p>
 <p id="feeText"></p>
 <p id="vatText"></p>
 <p id="verdictText"></p>
-
 </div>
 
 <div class="row">
-<button class="save" onclick="saveScan()">
-⭐ SAVE
-</button>
-
-<button class="clear" onclick="clearAll()">
-🗑 CLEAR
-</button>
+<button class="save" onclick="saveScan()">⭐ SAVE WINNER</button>
 </div>
 
 <div class="saved">
-
 <div class="savedHeader">
-<div class="sectionTitle">
-Saved Products
+<div class="sectionTitle">Saved Products</div>
+<div id="savedCount" class="savedCount">0</div>
 </div>
 
-<div id="savedCount" class="savedCount">
-0
-</div>
-</div>
-
-<div id="savedList">
-No saved products yet.
-</div>
-
+<div id="savedList">No saved products yet.</div>
 </div>
 
 </div>
 
 <script>
+function showStatus(msg){
+  const box=document.getElementById("status");
+  box.innerText=msg;
+  box.style.display="block";
+}
+
+function hideStatus(){
+  document.getElementById("status").style.display="none";
+}
 
 function goScan(){
   window.location.href="barcode-scanner.html";
 }
 
-function calculate(){
+function cleanText(v){
+  return (v || "").toString().trim();
+}
 
+function fallbackName(code){
+  return code ? "Scanned item "+code : "Unknown Product";
+}
+
+async function lookupNow(){
+  const barcode=cleanText(document.getElementById("barcode").value);
+  const product=cleanText(document.getElementById("productName").value);
+  const brand=cleanText(document.getElementById("brandName").value);
+
+  if(barcode){
+    await fetchProductByBarcode(barcode);
+    await fetchAmazonPrice(barcode,false);
+    return;
+  }
+
+  const query=[brand,product].filter(Boolean).join(" ");
+
+  if(query){
+    await fetchAmazonPrice(query,true);
+    return;
+  }
+
+  alert("Scan or enter a product first");
+}
+
+async function fetchProductByBarcode(barcode){
+  showStatus("Looking up product...");
+
+  try{
+    const apiRes=await fetch("/api/lookup?barcode="+encodeURIComponent(barcode));
+    if(apiRes.ok){
+      const data=await apiRes.json();
+
+      if(data && (data.name || data.title || data.brand)){
+        const name=data.name || data.title || fallbackName(barcode);
+        const brand=data.brand || "";
+
+        document.getElementById("productName").value=name;
+        document.getElementById("brandName").value=brand;
+
+        localStorage.setItem("scannedName",name);
+        localStorage.setItem("scannedBrand",brand);
+
+        showStatus("Product found");
+        return;
+      }
+    }
+  }catch(e){}
+
+  try{
+    const res=await fetch("https://world.openfoodfacts.org/api/v2/product/"+encodeURIComponent(barcode)+".json");
+    const data=await res.json();
+
+    if(data && data.product){
+      const p=data.product;
+      const name=p.product_name || p.product_name_en || fallbackName(barcode);
+      const brand=p.brands || "";
+
+      document.getElementById("productName").value=name;
+      document.getElementById("brandName").value=brand;
+
+      localStorage.setItem("scannedName",name);
+      localStorage.setItem("scannedBrand",brand);
+
+      showStatus("Product found with OpenFoodFacts");
+      return;
+    }
+  }catch(e){}
+
+  const name=fallbackName(barcode);
+  document.getElementById("productName").value=name;
+  document.getElementById("brandName").value="";
+
+  localStorage.setItem("scannedName",name);
+  localStorage.setItem("scannedBrand","");
+
+  showStatus("Barcode loaded - product name not found");
+}
+
+async function fetchAmazonPrice(value,isManual){
+  showStatus("Checking Amazon price...");
+
+  try{
+    const endpoint=isManual
+      ? "/api/amazon-price?query="+encodeURIComponent(value)
+      : "/api/amazon-price?barcode="+encodeURIComponent(value);
+
+    const res=await fetch(endpoint);
+    const data=await res.json();
+
+    if(data){
+      if(data.title){
+        document.getElementById("productName").value=data.title;
+        localStorage.setItem("scannedName",data.title);
+      }
+
+      if(data.brand){
+        document.getElementById("brandName").value=data.brand;
+        localStorage.setItem("scannedBrand",data.brand);
+      }
+
+      if(data.price!==null && data.price!==undefined && data.price!==""){
+        const price=Number(data.price).toFixed(2);
+        document.getElementById("amazon").value=price;
+        localStorage.setItem("scannedPrice",price);
+        showStatus("Amazon price found");
+        return;
+      }
+
+      if(data.affiliateUrl){
+        localStorage.setItem("amazonLink",data.affiliateUrl);
+      }
+    }
+  }catch(e){}
+
+  showStatus("Amazon price not found - tap Amazon or enter price manually");
+}
+
+function calculate(){
   const buy=parseFloat(document.getElementById("buy").value);
   const amazon=parseFloat(document.getElementById("amazon").value);
   const vatOn=document.getElementById("vatToggle").checked;
 
   if(isNaN(buy)||isNaN(amazon)||buy<=0||amazon<=0){
-    alert("Enter valid prices");
+    alert("Enter valid buy and sell prices");
     return;
   }
 
   const fee=amazon*0.15;
   const vat=vatOn ? amazon*0.20 : 0;
-
   const profit=amazon-fee-vat-buy;
   const roi=(profit/buy)*100;
 
@@ -372,126 +462,101 @@ function calculate(){
   let verdictClass="";
 
   if(profit>5 && roi>40){
-
     card.className="resultCard buy";
     title.innerText="🔥 WINNER";
-
     verdict="Excellent reseller opportunity";
     verdictClass="buyText";
-  }
-
-  else if(profit>0){
-
+  }else if(profit>0){
     card.className="resultCard maybe";
     title.innerText="⚠️ MAYBE";
-
     verdict="Worth checking competition";
     verdictClass="maybeText";
-  }
-
-  else{
-
+  }else{
     card.className="resultCard skip";
     title.innerText="❌ SKIP";
-
     verdict="Profit too low after fees";
     verdictClass="skipText";
   }
 
-  document.getElementById("profitText").innerHTML=
-    "💰 Profit: <strong>£"+profit.toFixed(2)+"</strong>";
-
-  document.getElementById("roiText").innerHTML=
-    "📈 ROI: <strong>"+roi.toFixed(1)+"%</strong>";
-
-  document.getElementById("feeText").innerHTML=
-    "🏷 Amazon Fee: £"+fee.toFixed(2);
-
-  document.getElementById("vatText").innerHTML=
-    vatOn
-    ? "🧾 VAT Estimate: £"+vat.toFixed(2)
-    : "🧾 VAT Estimate: OFF";
-
-  document.getElementById("verdictText").innerHTML=
-    "⭐ "+verdict;
-
+  document.getElementById("profitText").innerHTML="💰 Profit: <strong>£"+profit.toFixed(2)+"</strong>";
+  document.getElementById("roiText").innerHTML="📈 ROI: <strong>"+roi.toFixed(1)+"%</strong>";
+  document.getElementById("feeText").innerHTML="🏷 Amazon Fee: £"+fee.toFixed(2);
+  document.getElementById("vatText").innerHTML=vatOn ? "🧾 VAT Estimate: £"+vat.toFixed(2) : "🧾 VAT Estimate: OFF";
+  document.getElementById("verdictText").innerHTML="⭐ "+verdict;
   document.getElementById("verdictText").className=verdictClass;
 
   card.style.display="block";
-
   navigator.vibrate?.(200);
 }
 
 function openAmazon(){
+  const product=cleanText(document.getElementById("productName").value);
+  const brand=cleanText(document.getElementById("brandName").value);
+  const barcode=cleanText(document.getElementById("barcode").value);
 
-  const product=document.getElementById("productName").value;
-  const brand=document.getElementById("brandName").value;
+  const savedLink=localStorage.getItem("amazonLink") || "";
 
-  const search=[brand,product].join(" ").trim();
+  if(savedLink){
+    window.open(savedLink,"_blank");
+    return;
+  }
+
+  const search=[brand,product].filter(Boolean).join(" ") || barcode;
 
   if(!search){
     alert("Scan or enter a product first");
     return;
   }
 
-  window.open(
-    "https://www.amazon.co.uk/s?k="+encodeURIComponent(search),
-    "_blank"
-  );
+  const affiliateTag="nextgencreati-20";
+  const url="https://www.amazon.co.uk/s?k="+encodeURIComponent(search)+"&tag="+encodeURIComponent(affiliateTag);
+
+  localStorage.setItem("amazonLink",url);
+  window.open(url,"_blank");
 }
 
 function manualLookup(){
+  const currentProduct=cleanText(document.getElementById("productName").value);
+  const currentBrand=cleanText(document.getElementById("brandName").value);
 
-  const name=prompt("Enter product name");
+  const name=prompt("Enter product name",currentProduct);
+  if(!name)return;
 
-  if(name){
-    document.getElementById("productName").value=name;
-  }
+  const brand=prompt("Enter brand",currentBrand) || "";
+
+  document.getElementById("productName").value=name;
+  document.getElementById("brandName").value=brand;
+
+  fetchAmazonPrice([brand,name].filter(Boolean).join(" "),true);
 }
 
 function saveScan(){
-
-  const product=document.getElementById("productName").value || "Unknown Product";
-  const brand=document.getElementById("brandName").value || "";
-  const buy=document.getElementById("buy").value || "Not set";
-  const sell=document.getElementById("amazon").value || "Not set";
-  const barcode=document.getElementById("barcode").value || "None";
-
+  const product=cleanText(document.getElementById("productName").value) || "Unknown Product";
+  const brand=cleanText(document.getElementById("brandName").value);
+  const buy=cleanText(document.getElementById("buy").value) || "Not set";
+  const sell=cleanText(document.getElementById("amazon").value) || "Not set";
+  const barcode=cleanText(document.getElementById("barcode").value) || "None";
   const profit=document.getElementById("profitText").innerText || "";
   const roi=document.getElementById("roiText").innerText || "";
   const verdict=document.getElementById("resultTitle").innerText || "";
+  const link=localStorage.getItem("amazonLink") || "";
 
   const saved=JSON.parse(localStorage.getItem("savedProducts") || "[]");
 
   saved.unshift({
-    product,
-    brand,
-    buy,
-    sell,
-    barcode,
-    profit,
-    roi,
-    verdict,
+    product,brand,buy,sell,barcode,profit,roi,verdict,link,
     date:new Date().toLocaleString()
   });
 
-  localStorage.setItem(
-    "savedProducts",
-    JSON.stringify(saved.slice(0,50))
-  );
-
+  localStorage.setItem("savedProducts",JSON.stringify(saved.slice(0,50)));
   renderSaved();
-
   navigator.vibrate?.([100,50,100]);
+  showStatus("Saved");
 }
 
 function renderSaved(){
-
   const box=document.getElementById("savedList");
-
-  const saved=JSON.parse(
-    localStorage.getItem("savedProducts") || "[]"
-  );
+  const saved=JSON.parse(localStorage.getItem("savedProducts") || "[]");
 
   document.getElementById("savedCount").innerText=saved.length;
 
@@ -501,79 +566,59 @@ function renderSaved(){
   }
 
   box.innerHTML=saved.map(item=>{
-
-    let verdictClass="";
-
-    if(item.verdict.includes("WINNER")){
-      verdictClass="buyText";
-    }
-    else if(item.verdict.includes("MAYBE")){
-      verdictClass="maybeText";
-    }
-    else{
-      verdictClass="skipText";
-    }
+    let verdictClass="skipText";
+    if((item.verdict || "").includes("WINNER"))verdictClass="buyText";
+    else if((item.verdict || "").includes("MAYBE"))verdictClass="maybeText";
 
     return `
       <div class="savedItem">
-
-        <div class="savedTitle">
-          ${[item.brand,item.product].filter(Boolean).join(" ")}
-        </div>
-
-        <div class="savedVerdict ${verdictClass}">
-          ${item.verdict}
-        </div>
-
-        <div class="savedText">
-          ${item.profit || ""} ${item.roi ? "· "+item.roi : ""}
-        </div>
-
-        <div class="savedText">
-          Buy: £${item.buy} · Sell: £${item.sell}
-        </div>
-
-        <div class="savedText">
-          Barcode: ${item.barcode}
-        </div>
-
-        <div class="savedText">
-          Saved: ${item.date}
-        </div>
-
+        <div class="savedTitle">${[item.brand,item.product].filter(Boolean).join(" ")}</div>
+        <div class="savedVerdict ${verdictClass}">${item.verdict || "Saved"}</div>
+        <div class="savedText">${item.profit || ""} ${item.roi ? "· "+item.roi : ""}</div>
+        <div class="savedText">Buy: £${item.buy} · Sell: £${item.sell}</div>
+        <div class="savedText">Barcode: ${item.barcode}</div>
+        <div class="savedText">Saved: ${item.date}</div>
       </div>
     `;
   }).join("");
 }
 
 function clearAll(){
-
   document.getElementById("productName").value="";
   document.getElementById("brandName").value="";
   document.getElementById("barcode").value="";
   document.getElementById("buy").value="";
   document.getElementById("amazon").value="";
-
   document.getElementById("resultCard").style.display="none";
 
   localStorage.removeItem("scannedBarcode");
   localStorage.removeItem("scannedName");
   localStorage.removeItem("scannedBrand");
+  localStorage.removeItem("scannedPrice");
+  localStorage.removeItem("amazonLink");
+
+  hideStatus();
 }
 
-window.onload=()=>{
-
+window.onload=async ()=>{
   renderSaved();
 
   const barcode=localStorage.getItem("scannedBarcode") || "";
   const name=localStorage.getItem("scannedName") || "";
   const brand=localStorage.getItem("scannedBrand") || "";
+  const price=localStorage.getItem("scannedPrice") || "";
 
   document.getElementById("barcode").value=barcode;
   document.getElementById("productName").value=name;
   document.getElementById("brandName").value=brand;
-}
+  document.getElementById("amazon").value=price;
 
+  if(barcode){
+    showStatus("Scan loaded - matching product...");
+    await fetchProductByBarcode(barcode);
+    await fetchAmazonPrice(barcode,false);
+  }
+}
 </script>
 
 </body>
