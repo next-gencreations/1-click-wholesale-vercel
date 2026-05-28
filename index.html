@@ -6,13 +6,16 @@
 <title>1-Click Profit Finder</title>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
-  padding:20px;
+  padding:18px;
   font-family:Arial,sans-serif;
-  background:#EEF4F2;
+  background:linear-gradient(to bottom,#EEF4F2,#DDE7E3);
   color:#24323D;
 }
 
@@ -20,17 +23,23 @@ body{
   max-width:520px;
   margin:auto;
   background:white;
-  border-radius:28px;
-  padding:22px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  border-radius:32px;
+  padding:24px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.10);
+}
+
+.logo{
+  text-align:center;
+  font-size:62px;
+  margin-bottom:6px;
 }
 
 h1{
   text-align:center;
-  font-size:54px;
+  font-size:38px;
   margin:0;
-  font-weight:900;
-  line-height:0.95;
+  font-weight:1000;
+  line-height:1;
 }
 
 .sub{
@@ -43,19 +52,24 @@ h1{
 
 .scanButton{
   width:100%;
-  margin-top:26px;
-  padding:22px;
+  margin-top:28px;
+  padding:24px;
   border:none;
-  border-radius:22px;
-  background:#4CAF50;
+  border-radius:24px;
+  background:linear-gradient(135deg,#36C95D,#249944);
   color:white;
-  font-size:22px;
-  font-weight:900;
+  font-size:24px;
+  font-weight:1000;
+  box-shadow:0 8px 24px rgba(54,201,93,0.35);
+}
+
+.scanButton:active{
+  transform:scale(0.98);
 }
 
 label{
   display:block;
-  margin-top:24px;
+  margin-top:22px;
   margin-bottom:8px;
   font-size:15px;
   font-weight:900;
@@ -67,6 +81,7 @@ input{
   border-radius:18px;
   border:2px solid #D8DDDF;
   font-size:18px;
+  background:white;
 }
 
 .switch{
@@ -77,7 +92,7 @@ input{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  font-weight:700;
+  font-weight:800;
 }
 
 .switch input{
@@ -87,168 +102,266 @@ input{
 
 .mainButton{
   width:100%;
-  margin-top:18px;
-  padding:18px;
+  margin-top:20px;
+  padding:20px;
   border:none;
-  border-radius:18px;
-  background:#6C998A;
+  border-radius:22px;
+  background:linear-gradient(135deg,#6C998A,#55796D);
   color:white;
-  font-size:20px;
-  font-weight:900;
+  font-size:22px;
+  font-weight:1000;
 }
 
 .row{
   display:flex;
   gap:10px;
-  margin-top:12px;
+  margin-top:14px;
 }
 
 .row button{
   flex:1;
-  padding:16px;
+  padding:18px;
   border:none;
-  border-radius:16px;
+  border-radius:18px;
   font-size:16px;
   font-weight:900;
   color:white;
 }
 
-.amazon{background:#2196F3}
-.manual{background:#E91E63}
-.save{background:#8E44AD}
-.clear{background:#666}
+.amazon{
+  background:#2196F3;
+}
+
+.manual{
+  background:#E91E63;
+}
+
+.save{
+  background:#8E44AD;
+}
+
+.clear{
+  background:#666;
+}
 
 .resultCard{
-  margin-top:22px;
-  border-radius:22px;
-  padding:22px;
+  margin-top:26px;
+  border-radius:28px;
+  padding:24px;
   display:none;
   color:white;
+  animation:pop 0.35s ease;
+}
+
+@keyframes pop{
+  from{
+    transform:scale(0.92);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
 }
 
 .resultCard h2{
-  margin:0 0 10px 0;
-  font-size:34px;
+  margin:0 0 12px 0;
+  font-size:38px;
+  text-align:center;
 }
 
 .resultCard p{
-  margin:8px 0;
-  font-size:18px;
-  font-weight:700;
+  margin:12px 0;
+  font-size:20px;
+  font-weight:800;
 }
 
-.buy{background:#2E7D32}
-.maybe{background:#F9A825}
-.skip{background:#C62828}
+.buy{
+  background:linear-gradient(135deg,#1E7A36,#34B34F);
+  box-shadow:0 10px 28px rgba(52,179,79,0.35);
+}
+
+.maybe{
+  background:linear-gradient(135deg,#D98A00,#F9B233);
+  box-shadow:0 10px 28px rgba(249,178,51,0.35);
+}
+
+.skip{
+  background:linear-gradient(135deg,#9C1F1F,#D83A3A);
+  box-shadow:0 10px 28px rgba(216,58,58,0.35);
+}
 
 .saved{
-  margin-top:24px;
-  padding:18px;
+  margin-top:28px;
+  padding:20px;
   background:#F7FAF9;
-  border-radius:18px;
+  border-radius:24px;
+}
+
+.savedHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.sectionTitle{
+  font-size:26px;
+  font-weight:1000;
+}
+
+.savedCount{
+  background:#24323D;
+  color:white;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:900;
 }
 
 .savedItem{
-  margin-top:12px;
+  margin-top:14px;
   background:white;
-  padding:14px;
-  border-radius:14px;
+  padding:16px;
+  border-radius:18px;
   border:1px solid #D8DDDF;
 }
 
 .savedTitle{
-  font-weight:900;
+  font-weight:1000;
   font-size:18px;
 }
 
+.savedVerdict{
+  margin-top:8px;
+  font-size:14px;
+  font-weight:900;
+}
+
 .savedText{
-  margin-top:4px;
+  margin-top:5px;
   color:#5B6770;
   font-size:14px;
 }
 
-.sectionTitle{
-  font-size:24px;
-  font-weight:900;
-}
+.buyText{color:#1E7A36}
+.maybeText{color:#D98A00}
+.skipText{color:#C62828}
+
 </style>
 </head>
 
 <body>
 
 <div class="card">
-  <h1>1-Click Profit Finder</h1>
 
-  <div class="sub">
-    Scan products. Check profit. Save winners.
-  </div>
+<div class="logo">📦</div>
 
-  <button class="scanButton" onclick="goScan()">📷 Scan Product</button>
+<h1>1-Click Profit Finder</h1>
 
-  <label>Product</label>
-  <input id="productName">
+<div class="sub">
+Scan products. Check profit. Save winners.
+</div>
 
-  <label>Brand</label>
-  <input id="brandName">
+<button class="scanButton" onclick="goScan()">
+📷 SCAN PRODUCT
+</button>
 
-  <label>Barcode</label>
-  <input id="barcode">
+<label>Product</label>
+<input id="productName">
 
-  <label>Buy Price (£)</label>
-  <input id="buy" type="number">
+<label>Brand</label>
+<input id="brandName">
 
-  <label>Sell Price (£)</label>
-  <input id="amazon" type="number">
+<label>Barcode</label>
+<input id="barcode">
 
-  <div class="switch">
-    <span>Include VAT estimate (20%)</span>
-    <input id="vatToggle" type="checkbox">
-  </div>
+<label>Buy Price (£)</label>
+<input id="buy" type="number">
 
-  <button class="mainButton" onclick="calculate()">💰 Check Profit</button>
+<label>Sell Price (£)</label>
+<input id="amazon" type="number">
 
-  <div class="row">
-    <button class="amazon" onclick="openAmazon()">🛒 Search Amazon</button>
-    <button class="manual" onclick="manualLookup()">✍️ Manual Lookup</button>
-  </div>
+<div class="switch">
+<span>Include VAT estimate (20%)</span>
+<input id="vatToggle" type="checkbox">
+</div>
 
-  <div id="resultCard" class="resultCard">
-    <h2 id="resultTitle">BUY</h2>
-    <p id="profitText"></p>
-    <p id="roiText"></p>
-    <p id="feeText"></p>
-    <p id="vatText"></p>
-    <p id="verdictText"></p>
-  </div>
+<button class="mainButton" onclick="calculate()">
+💰 CHECK PROFIT
+</button>
 
-  <div class="row">
-    <button class="save" onclick="saveScan()">⭐ Save Scan</button>
-    <button class="clear" onclick="clearAll()">🗑 Clear</button>
-  </div>
+<div class="row">
+<button class="amazon" onclick="openAmazon()">
+🛒 AMAZON
+</button>
 
-  <div class="saved">
-    <div class="sectionTitle">Recent Saved Products</div>
-    <div id="savedList">No saved products yet.</div>
-  </div>
+<button class="manual" onclick="manualLookup()">
+✍️ MANUAL
+</button>
+</div>
+
+<div id="resultCard" class="resultCard">
+
+<h2 id="resultTitle">WINNER</h2>
+
+<p id="profitText"></p>
+<p id="roiText"></p>
+<p id="feeText"></p>
+<p id="vatText"></p>
+<p id="verdictText"></p>
+
+</div>
+
+<div class="row">
+<button class="save" onclick="saveScan()">
+⭐ SAVE
+</button>
+
+<button class="clear" onclick="clearAll()">
+🗑 CLEAR
+</button>
+</div>
+
+<div class="saved">
+
+<div class="savedHeader">
+<div class="sectionTitle">
+Saved Products
+</div>
+
+<div id="savedCount" class="savedCount">
+0
+</div>
+</div>
+
+<div id="savedList">
+No saved products yet.
+</div>
+
+</div>
+
 </div>
 
 <script>
+
 function goScan(){
   window.location.href="barcode-scanner.html";
 }
 
 function calculate(){
+
   const buy=parseFloat(document.getElementById("buy").value);
   const amazon=parseFloat(document.getElementById("amazon").value);
   const vatOn=document.getElementById("vatToggle").checked;
 
   if(isNaN(buy)||isNaN(amazon)||buy<=0||amazon<=0){
-    alert("Enter valid buy and sell prices");
+    alert("Enter valid prices");
     return;
   }
 
   const fee=amazon*0.15;
   const vat=vatOn ? amazon*0.20 : 0;
+
   const profit=amazon-fee-vat-buy;
   const roi=(profit/buy)*100;
 
@@ -256,19 +369,33 @@ function calculate(){
   const title=document.getElementById("resultTitle");
 
   let verdict="";
+  let verdictClass="";
 
   if(profit>5 && roi>40){
+
     card.className="resultCard buy";
     title.innerText="🔥 WINNER";
+
     verdict="Excellent reseller opportunity";
-  } else if(profit>0){
+    verdictClass="buyText";
+  }
+
+  else if(profit>0){
+
     card.className="resultCard maybe";
     title.innerText="⚠️ MAYBE";
+
     verdict="Worth checking competition";
-  } else {
+    verdictClass="maybeText";
+  }
+
+  else{
+
     card.className="resultCard skip";
     title.innerText="❌ SKIP";
+
     verdict="Profit too low after fees";
+    verdictClass="skipText";
   }
 
   document.getElementById("profitText").innerHTML=
@@ -281,18 +408,25 @@ function calculate(){
     "🏷 Amazon Fee: £"+fee.toFixed(2);
 
   document.getElementById("vatText").innerHTML=
-    vatOn ? "🧾 VAT Estimate: £"+vat.toFixed(2) : "🧾 VAT Estimate: OFF";
+    vatOn
+    ? "🧾 VAT Estimate: £"+vat.toFixed(2)
+    : "🧾 VAT Estimate: OFF";
 
   document.getElementById("verdictText").innerHTML=
     "⭐ "+verdict;
 
+  document.getElementById("verdictText").className=verdictClass;
+
   card.style.display="block";
+
   navigator.vibrate?.(200);
 }
 
 function openAmazon(){
+
   const product=document.getElementById("productName").value;
   const brand=document.getElementById("brandName").value;
+
   const search=[brand,product].join(" ").trim();
 
   if(!search){
@@ -307,18 +441,22 @@ function openAmazon(){
 }
 
 function manualLookup(){
+
   const name=prompt("Enter product name");
+
   if(name){
     document.getElementById("productName").value=name;
   }
 }
 
 function saveScan(){
+
   const product=document.getElementById("productName").value || "Unknown Product";
   const brand=document.getElementById("brandName").value || "";
   const buy=document.getElementById("buy").value || "Not set";
   const sell=document.getElementById("amazon").value || "Not set";
   const barcode=document.getElementById("barcode").value || "None";
+
   const profit=document.getElementById("profitText").innerText || "";
   const roi=document.getElementById("roiText").innerText || "";
   const verdict=document.getElementById("resultTitle").innerText || "";
@@ -337,37 +475,85 @@ function saveScan(){
     date:new Date().toLocaleString()
   });
 
-  localStorage.setItem("savedProducts",JSON.stringify(saved.slice(0,30)));
+  localStorage.setItem(
+    "savedProducts",
+    JSON.stringify(saved.slice(0,50))
+  );
+
   renderSaved();
+
+  navigator.vibrate?.([100,50,100]);
 }
 
 function renderSaved(){
+
   const box=document.getElementById("savedList");
-  const saved=JSON.parse(localStorage.getItem("savedProducts") || "[]");
+
+  const saved=JSON.parse(
+    localStorage.getItem("savedProducts") || "[]"
+  );
+
+  document.getElementById("savedCount").innerText=saved.length;
 
   if(saved.length===0){
     box.innerHTML="No saved products yet.";
     return;
   }
 
-  box.innerHTML=saved.map(item=>`
-    <div class="savedItem">
-      <div class="savedTitle">${[item.brand,item.product].filter(Boolean).join(" ")}</div>
-      <div class="savedText">${item.verdict || ""}</div>
-      <div class="savedText">${item.profit || ""} ${item.roi ? "· "+item.roi : ""}</div>
-      <div class="savedText">Buy: £${item.buy} · Sell: £${item.sell}</div>
-      <div class="savedText">Barcode: ${item.barcode}</div>
-      <div class="savedText">Saved: ${item.date}</div>
-    </div>
-  `).join("");
+  box.innerHTML=saved.map(item=>{
+
+    let verdictClass="";
+
+    if(item.verdict.includes("WINNER")){
+      verdictClass="buyText";
+    }
+    else if(item.verdict.includes("MAYBE")){
+      verdictClass="maybeText";
+    }
+    else{
+      verdictClass="skipText";
+    }
+
+    return `
+      <div class="savedItem">
+
+        <div class="savedTitle">
+          ${[item.brand,item.product].filter(Boolean).join(" ")}
+        </div>
+
+        <div class="savedVerdict ${verdictClass}">
+          ${item.verdict}
+        </div>
+
+        <div class="savedText">
+          ${item.profit || ""} ${item.roi ? "· "+item.roi : ""}
+        </div>
+
+        <div class="savedText">
+          Buy: £${item.buy} · Sell: £${item.sell}
+        </div>
+
+        <div class="savedText">
+          Barcode: ${item.barcode}
+        </div>
+
+        <div class="savedText">
+          Saved: ${item.date}
+        </div>
+
+      </div>
+    `;
+  }).join("");
 }
 
 function clearAll(){
+
   document.getElementById("productName").value="";
   document.getElementById("brandName").value="";
   document.getElementById("barcode").value="";
   document.getElementById("buy").value="";
   document.getElementById("amazon").value="";
+
   document.getElementById("resultCard").style.display="none";
 
   localStorage.removeItem("scannedBarcode");
@@ -376,6 +562,7 @@ function clearAll(){
 }
 
 window.onload=()=>{
+
   renderSaved();
 
   const barcode=localStorage.getItem("scannedBarcode") || "";
@@ -386,6 +573,7 @@ window.onload=()=>{
   document.getElementById("productName").value=name;
   document.getElementById("brandName").value=brand;
 }
+
 </script>
 
 </body>
