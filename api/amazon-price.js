@@ -1,55 +1,70 @@
 export default async function handler(req, res) {
+
   const { barcode, query } = req.query;
 
-  if (!barcode && !query) {
-    return res.status(400).json({ error: "Missing barcode or query" });
+  const search = barcode || query;
+
+  if (!search) {
+    return res.status(400).json({
+      error: "Missing barcode or query"
+    });
   }
 
-  const demoProducts = {
-    "50002214": {
-      title: "True Aroma Ylang Ylang & Honeysuckle Candle",
-      price: 11.00,
-      affiliateUrl: "https://www.amazon.co.uk/s?k=True+Aroma+Ylang+Ylang+Honeysuckle+Candle",
-      source: "demo"
-    },
-    "5012345678901": {
-      title: "Smart Watch",
-      price: 39.99,
-      affiliateUrl: "https://www.amazon.co.uk/s?k=smart+watch",
-      source: "demo"
-    },
-    "5901234123457": {
-      title: "Wireless Earbuds",
-      price: 24.99,
-      affiliateUrl: "https://www.amazon.co.uk/s?k=wireless+earbuds",
-      source: "demo"
-    },
-    "5055555555555": {
-      title: "Bluetooth Speaker",
-      price: 18.50,
-      affiliateUrl: "https://www.amazon.co.uk/s?k=bluetooth+speaker",
-      source: "demo"
-    }
-  };
-
   try {
-    if (barcode && demoProducts[barcode]) {
-      return res.status(200).json(demoProducts[barcode]);
+
+    const amazonUrl =
+      "https://www.amazon.co.uk/s?k=" +
+      encodeURIComponent(search);
+
+    const response = await fetch(amazonUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122 Safari/537.36",
+        "Accept-Language": "en-GB,en;q=0.9"
+      }
+    });
+
+    const html = await response.text();
+
+    let title = null;
+    let price = null;
+
+    // PRODUCT TITLE
+    const titleMatch =
+      html.match(/"name":"(.*?)"/) ||
+      html.match(/a-size-medium a-color-base a-text-normal">(.*?)</);
+
+    if (titleMatch && titleMatch[1]) {
+      title = titleMatch[1]
+        .replace(/&amp;/g, "&")
+        .replace(/&#39;/g, "'")
+        .replace(/<[^>]*>/g, "")
+        .trim();
     }
 
-    const searchTerm = query || barcode || "";
+    // AMAZON PRICE
+    const priceMatch =
+      html.match(/"priceAmount":([0-9.]+)/) ||
+      html.match(/£\s?([0-9]+\.[0-9]{2})/);
+
+    if (priceMatch && priceMatch[1]) {
+      price = parseFloat(priceMatch[1]);
+    }
+
     return res.status(200).json({
-      title: searchTerm,
-      price: null,
-      affiliateUrl: `https://www.amazon.co.uk/s?k=${encodeURIComponent(searchTerm)}`,
-      source: "fallback-search"
+      success: true,
+      search,
+      title,
+      price,
+      amazonUrl
     });
-  } catch (error) {
-    return res.status(200).json({
-      title: query || `Retail product (${barcode || ""})`.trim(),
-      price: null,
-      affiliateUrl: `https://www.amazon.co.uk/s?k=${encodeURIComponent(query || barcode || "")}`,
-      source: "fallback-search"
+
+  } catch (err) {
+
+    return res.status(500).json({
+      success: false,
+      error: err.message
     });
+
   }
 }
