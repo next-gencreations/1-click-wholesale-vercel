@@ -284,7 +284,8 @@ function goScan(){
   window.location.href="barcode-scanner.html";
 }
 
-function calculate(){
+
+  function calculate(){
 
   const buy=parseFloat(document.getElementById("buy").value);
   const amazon=parseFloat(document.getElementById("amazon").value);
@@ -294,6 +295,63 @@ function calculate(){
     alert("Enter prices");
     return;
   }
+
+  const fee=amazon*0.15;
+  const vat=vatOn ? amazon*0.20 : 0;
+
+  const profit=amazon-fee-vat-buy;
+  const roi=(profit/buy)*100;
+
+  const card=document.getElementById("resultCard");
+  const title=document.getElementById("resultTitle");
+
+  let verdict="";
+
+  if(profit>5 && roi>40){
+
+    card.className="resultCard buy";
+    title.innerText="🔥 WINNER";
+
+    verdict="Excellent reseller opportunity";
+  }
+
+  else if(profit>0){
+
+    card.className="resultCard maybe";
+    title.innerText="⚠️ MAYBE";
+
+    verdict="Worth checking competition";
+  }
+
+  else{
+
+    card.className="resultCard skip";
+    title.innerText="❌ SKIP";
+
+    verdict="Profit too low after fees";
+  }
+
+  document.getElementById("profitText").innerHTML=
+    "💰 Profit: <strong>£"+profit.toFixed(2)+"</strong>";
+
+  document.getElementById("roiText").innerHTML=
+    "📈 ROI: <strong>"+roi.toFixed(1)+"%</strong>";
+
+  document.getElementById("feeText").innerHTML=
+    "🏷 Amazon Fee: £"+fee.toFixed(2);
+
+  document.getElementById("vatText").innerHTML=
+    vatOn
+    ? "🧾 VAT Estimate: £"+vat.toFixed(2)
+    : "🧾 VAT Estimate: OFF";
+
+  document.getElementById("verdictText").innerHTML=
+    "⭐ "+verdict;
+
+  card.style.display="block";
+
+  navigator.vibrate?.(200);
+}
 
   const fee=amazon*0.15;
   const vat=vatOn ? amazon*0.20 : 0;
