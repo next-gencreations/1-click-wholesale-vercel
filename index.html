@@ -7,244 +7,38 @@
 
 <style>
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  padding:18px;
-  font-family:Arial,sans-serif;
-  background:linear-gradient(to bottom,#EEF4F2,#DDE7E3);
-  color:#24323D;
-}
-
-.card{
-  max-width:520px;
-  margin:auto;
-  background:white;
-  border-radius:32px;
-  padding:24px;
-  box-shadow:0 12px 40px rgba(0,0,0,0.10);
-}
-
-.logo{
-  text-align:center;
-  font-size:62px;
-  margin-bottom:6px;
-}
-
-h1{
-  text-align:center;
-  font-size:38px;
-  margin:0;
-  font-weight:1000;
-  line-height:1;
-}
-
-.sub{
-  text-align:center;
-  margin-top:14px;
-  color:#5B6770;
-  font-size:17px;
-  font-weight:700;
-}
-
-.scanButton{
-  width:100%;
-  margin-top:28px;
-  padding:24px;
-  border:none;
-  border-radius:24px;
-  background:linear-gradient(135deg,#36C95D,#249944);
-  color:white;
-  font-size:24px;
-  font-weight:1000;
-  box-shadow:0 8px 24px rgba(54,201,93,0.35);
-}
-
-.notice{
-  margin-top:18px;
-  padding:16px;
-  border-radius:20px;
-  background:#F7FAF9;
-  color:#55796D;
-  text-align:center;
-  font-size:17px;
-  font-weight:900;
-}
-
-.productImage{
-  width:100%;
-  max-height:220px;
-  object-fit:contain;
-  margin-top:16px;
-  border-radius:22px;
-  background:#F7FAF9;
-  display:none;
-}
-
-label{
-  display:block;
-  margin-top:22px;
-  margin-bottom:8px;
-  font-size:15px;
-  font-weight:900;
-}
-
-input{
-  width:100%;
-  padding:18px;
-  border-radius:18px;
-  border:2px solid #D8DDDF;
-  font-size:18px;
-  background:white;
-}
-
-.switch{
-  margin-top:18px;
-  background:#F7FAF9;
-  border-radius:18px;
-  padding:16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:800;
-}
-
-.switch input{
-  width:24px;
-  height:24px;
-}
-
-.mainButton{
-  width:100%;
-  margin-top:20px;
-  padding:20px;
-  border:none;
-  border-radius:22px;
-  background:linear-gradient(135deg,#6C998A,#55796D);
-  color:white;
-  font-size:22px;
-  font-weight:1000;
-}
-
-.row{
-  display:flex;
-  gap:10px;
-  margin-top:14px;
-}
-
-.row button{
-  flex:1;
-  padding:18px;
-  border:none;
-  border-radius:18px;
-  font-size:16px;
-  font-weight:900;
-  color:white;
-}
-
-.lookup{background:#009688}
-.amazon{background:#2196F3}
-.manual{background:#E91E63}
-.link{background:#FF9800}
-.save{background:#8E44AD}
-.clear{background:#666}
-
-.resultCard{
-  margin-top:26px;
-  border-radius:28px;
-  padding:24px;
-  display:none;
-  color:white;
-  animation:pop .35s ease;
-}
-
-@keyframes pop{
-  from{transform:scale(.92);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-
-.resultCard h2{
-  margin:0 0 12px 0;
-  font-size:38px;
-  text-align:center;
-}
-
-.resultCard p{
-  margin:12px 0;
-  font-size:20px;
-  font-weight:800;
-}
-
-.buy{
-  background:linear-gradient(135deg,#1E7A36,#34B34F);
-  box-shadow:0 10px 28px rgba(52,179,79,.35);
-}
-
-.maybe{
-  background:linear-gradient(135deg,#D98A00,#F9B233);
-  box-shadow:0 10px 28px rgba(249,178,51,.35);
-}
-
-.skip{
-  background:linear-gradient(135deg,#9C1F1F,#D83A3A);
-  box-shadow:0 10px 28px rgba(216,58,58,.35);
-}
-
-.saved{
-  margin-top:28px;
-  padding:20px;
-  background:#F7FAF9;
-  border-radius:24px;
-}
-
-.savedHeader{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.sectionTitle{
-  font-size:26px;
-  font-weight:1000;
-}
-
-.savedCount{
-  background:#24323D;
-  color:white;
-  padding:6px 12px;
-  border-radius:999px;
-  font-size:14px;
-  font-weight:900;
-}
-
-.savedItem{
-  margin-top:14px;
-  background:white;
-  padding:16px;
-  border-radius:18px;
-  border:1px solid #D8DDDF;
-}
-
-.savedTitle{
-  font-weight:1000;
-  font-size:18px;
-}
-
-.savedVerdict{
-  margin-top:8px;
-  font-size:14px;
-  font-weight:900;
-}
-
-.savedText{
-  margin-top:5px;
-  color:#5B6770;
-  font-size:14px;
-}
-
-.buyText{color:#1E7A36}
-.maybeText{color:#D98A00}
-.skipText{color:#C62828}
+body{margin:0;padding:18px;font-family:Arial,sans-serif;background:linear-gradient(to bottom,#EEF4F2,#DDE7E3);color:#24323D}
+.card{max-width:520px;margin:auto;background:white;border-radius:32px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.10)}
+.logo{text-align:center;font-size:62px;margin-bottom:6px}
+h1{text-align:center;font-size:38px;margin:0;font-weight:1000;line-height:1}
+.sub{text-align:center;margin-top:14px;color:#5B6770;font-size:17px;font-weight:700}
+.scanButton{width:100%;margin-top:28px;padding:24px;border:none;border-radius:24px;background:linear-gradient(135deg,#36C95D,#249944);color:white;font-size:24px;font-weight:1000;box-shadow:0 8px 24px rgba(54,201,93,.35)}
+.notice{margin-top:18px;padding:16px;border-radius:20px;background:#F7FAF9;color:#55796D;text-align:center;font-size:17px;font-weight:900}
+.productImage{width:100%;max-height:220px;object-fit:contain;margin-top:16px;border-radius:22px;background:#F7FAF9;display:none}
+label{display:block;margin-top:22px;margin-bottom:8px;font-size:15px;font-weight:900}
+input{width:100%;padding:18px;border-radius:18px;border:2px solid #D8DDDF;font-size:18px;background:white}
+.switch{margin-top:18px;background:#F7FAF9;border-radius:18px;padding:16px;display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.switch input{width:24px;height:24px}
+.mainButton{width:100%;margin-top:20px;padding:20px;border:none;border-radius:22px;background:linear-gradient(135deg,#6C998A,#55796D);color:white;font-size:22px;font-weight:1000}
+.row{display:flex;gap:10px;margin-top:14px}
+.row button{flex:1;padding:18px;border:none;border-radius:18px;font-size:16px;font-weight:900;color:white}
+.lookup{background:#009688}.amazon{background:#2196F3}.manual{background:#E91E63}.link{background:#FF9800}.save{background:#8E44AD}.clear{background:#666}.copy{background:#111}.share{background:#00A884}
+.resultCard{margin-top:26px;border-radius:28px;padding:24px;display:none;color:white;animation:pop .35s ease}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.resultCard h2{margin:0 0 12px 0;font-size:38px;text-align:center}
+.resultCard p{margin:12px 0;font-size:20px;font-weight:800}
+.buy{background:linear-gradient(135deg,#1E7A36,#34B34F);box-shadow:0 10px 28px rgba(52,179,79,.35)}
+.maybe{background:linear-gradient(135deg,#D98A00,#F9B233);box-shadow:0 10px 28px rgba(249,178,51,.35)}
+.skip{background:linear-gradient(135deg,#9C1F1F,#D83A3A);box-shadow:0 10px 28px rgba(216,58,58,.35)}
+.saved{margin-top:28px;padding:20px;background:#F7FAF9;border-radius:24px}
+.savedHeader{display:flex;justify-content:space-between;align-items:center}
+.sectionTitle{font-size:26px;font-weight:1000}
+.savedCount{background:#24323D;color:white;padding:6px 12px;border-radius:999px;font-size:14px;font-weight:900}
+.savedItem{margin-top:14px;background:white;padding:16px;border-radius:18px;border:1px solid #D8DDDF}
+.savedTitle{font-weight:1000;font-size:18px}
+.savedVerdict{margin-top:8px;font-size:14px;font-weight:900}
+.savedText{margin-top:5px;color:#5B6770;font-size:14px}
+.buyText{color:#1E7A36}.maybeText{color:#D98A00}.skipText{color:#C62828}
 </style>
 </head>
 
@@ -255,7 +49,6 @@ input{
 <div class="logo">📦</div>
 
 <h1>1-Click Profit Finder</h1>
-
 <div class="sub">Scan products. Check profit. Save winners.</div>
 
 <button class="scanButton" onclick="goScan()">📷 SCAN PRODUCT</button>
@@ -296,6 +89,11 @@ input{
 <button class="manual" onclick="manualLookup()">✍️ MANUAL</button>
 </div>
 
+<div class="row">
+<button class="copy" onclick="copyAffiliateLink()">📋 COPY</button>
+<button class="share" onclick="shareDeal()">📤 SHARE</button>
+</div>
+
 <div id="resultCard" class="resultCard">
 <h2 id="resultTitle">RESULT</h2>
 <p id="profitText"></p>
@@ -321,6 +119,8 @@ input{
 </div>
 
 <script>
+const AFFILIATE_TAG="nextgencreati-20";
+
 function goScan(){
   window.location.href="barcode-scanner.html";
 }
@@ -331,6 +131,23 @@ function setNotice(text){
 
 function clean(v){
   return (v || "").toString().trim();
+}
+
+function buildAmazonSearchUrl(){
+  const savedLink=localStorage.getItem("amazonLink");
+  if(savedLink) return savedLink;
+
+  const product=clean(document.getElementById("productName").value);
+  const brand=clean(document.getElementById("brandName").value);
+  const barcode=clean(document.getElementById("barcode").value);
+
+  const search=[brand,product].filter(Boolean).join(" ") || barcode;
+
+  if(!search) return "";
+
+  const url="https://www.amazon.co.uk/s?k="+encodeURIComponent(search)+"&tag="+encodeURIComponent(AFFILIATE_TAG);
+  localStorage.setItem("amazonLink",url);
+  return url;
 }
 
 async function lookupProduct(){
@@ -367,11 +184,11 @@ async function lookupProduct(){
       img.style.display="block";
     }
 
-    if(data.amazonUrl){
-      localStorage.setItem("amazonLink",data.amazonUrl);
-    }
+    const search=[data.brand,data.productName].filter(Boolean).join(" ") || barcode || product;
+    const amazonUrl="https://www.amazon.co.uk/s?k="+encodeURIComponent(search)+"&tag="+encodeURIComponent(AFFILIATE_TAG);
+    localStorage.setItem("amazonLink",amazonUrl);
 
-    setNotice("Product found — tap Amazon, check price, then enter sell price");
+    setNotice("Product found — Amazon affiliate link ready");
   }catch(e){
     setNotice("Lookup error — try Amazon/manual");
   }
@@ -420,29 +237,18 @@ function calculate(){
   document.getElementById("verdictText").className=verdictClass;
 
   card.style.display="block";
+  setNotice("Profit checked — save this find if it looks good");
   navigator.vibrate?.(200);
 }
 
 function openAmazon(){
-  const savedLink=localStorage.getItem("amazonLink");
-  const product=clean(document.getElementById("productName").value);
-  const brand=clean(document.getElementById("brandName").value);
-  const barcode=clean(document.getElementById("barcode").value);
+  const url=buildAmazonSearchUrl();
 
-  if(savedLink){
-    window.open(savedLink,"_blank");
-    return;
-  }
-
-  const search=[brand,product].filter(Boolean).join(" ") || barcode;
-
-  if(!search){
+  if(!url){
     alert("Scan or enter product first");
     return;
   }
 
-  const url="https://www.amazon.co.uk/s?k="+encodeURIComponent(search)+"&tag=nextgencreati-20";
-  localStorage.setItem("amazonLink",url);
   window.open(url,"_blank");
 }
 
@@ -452,10 +258,10 @@ function pasteAmazonLink(){
 
   const tagged=link.includes("tag=")
     ? link
-    : link+(link.includes("?") ? "&" : "?")+"tag=nextgencreati-20";
+    : link+(link.includes("?") ? "&" : "?")+"tag="+encodeURIComponent(AFFILIATE_TAG);
 
   localStorage.setItem("amazonLink",tagged);
-  setNotice("Amazon link saved — enter sell price and check profit");
+  setNotice("Amazon link saved with tracking ID");
 }
 
 function manualLookup(){
@@ -466,6 +272,52 @@ function manualLookup(){
   if(brand) document.getElementById("brandName").value=brand;
 
   lookupProduct();
+}
+
+async function copyAffiliateLink(){
+  const url=buildAmazonSearchUrl();
+
+  if(!url){
+    alert("No Amazon link yet");
+    return;
+  }
+
+  try{
+    await navigator.clipboard.writeText(url);
+    setNotice("Affiliate link copied");
+  }catch(e){
+    prompt("Copy this affiliate link",url);
+  }
+}
+
+async function shareDeal(){
+  const url=buildAmazonSearchUrl();
+
+  if(!url){
+    alert("No Amazon link yet");
+    return;
+  }
+
+  const product=clean(document.getElementById("productName").value) || "Amazon find";
+  const brand=clean(document.getElementById("brandName").value);
+  const title=[brand,product].filter(Boolean).join(" ");
+
+  const text="Found this: "+title+" "+url;
+
+  if(navigator.share){
+    try{
+      await navigator.share({title:"1-Click Profit Finder",text,url});
+      setNotice("Deal shared");
+      return;
+    }catch(e){}
+  }
+
+  try{
+    await navigator.clipboard.writeText(text);
+    setNotice("Share text copied");
+  }catch(e){
+    prompt("Copy this share text",text);
+  }
 }
 
 function saveScan(){
@@ -480,7 +332,7 @@ function saveScan(){
     profit:document.getElementById("profitText").innerText || "",
     roi:document.getElementById("roiText").innerText || "",
     verdict:document.getElementById("resultTitle").innerText || "",
-    link:localStorage.getItem("amazonLink") || "",
+    link:buildAmazonSearchUrl(),
     date:new Date().toLocaleString()
   });
 
