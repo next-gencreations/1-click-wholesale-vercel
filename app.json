@@ -4,16 +4,10 @@
     "slug": "one-click-profit-finder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./icon.png",
+    "icon": "./icon-512.png",
     "userInterfaceStyle": "light",
-    "sdkVersion": "52.0.0",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
     "splash": {
-      "image": "./splash.png",
+      "image": "./icon-512.png",
       "resizeMode": "contain",
       "backgroundColor": "#EEF4F2"
     },
@@ -26,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./adaptive-icon.png",
+        "foregroundImage": "./icon-512.png",
         "backgroundColor": "#EEF4F2"
       },
       "package": "com.nextgencreations.profitfinder",
@@ -37,15 +31,6 @@
     },
     "web": {
       "favicon": "./icon-192.png"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0,
-      "enabled": true,
-      "checkAutomatically": "ON_LOAD"
-    },
-    "jsEngine": "hermes",
-    "runtimeVersion": {
-      "policy": "sdkVersion"
     }
   }
 }
