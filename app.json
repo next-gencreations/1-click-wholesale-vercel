@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "DevHub Mobile",
-    "slug": "devhub-mobile",
+    "name": "1-Click Profit Finder",
+    "slug": "one-click-profit-finder",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./icon.png",
@@ -9,43 +9,34 @@
     "sdkVersion": "52.0.0",
     "platforms": [
       "ios",
-      "android"
+      "android",
+      "web"
     ],
     "splash": {
       "image": "./splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#EEF4F2"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nextgencreators.devhub.mobile"
+      "bundleIdentifier": "com.nextgencreations.profitfinder"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#EEF4F2"
       },
-      "package": "com.nextgencreators.devhub.mobile",
-      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.nextgencreators.devhub.mobile",
+      "package": "com.nextgencreations.profitfinder",
       "permissions": [
         "android.permission.INTERNET",
-        "android.permission.CAMERA",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.USE_FINGERPRINT",
-        "android.permission.USE_BIOMETRIC"
+        "android.permission.CAMERA"
       ]
     },
     "web": {
-      "favicon": "./client/public/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "ae0866c5-b361-4272-a10d-eb1cf2b28b20"
-      }
+      "favicon": "./icon-192.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0,
