@@ -1,21 +1,25 @@
 {
   "name": "1-Click Profit Finder",
   "short_name": "Profit Finder",
-  "start_url": "/index.html?v=4",
+  "description": "Scan products, check profit and save winning finds.",
+  "start_url": "/index.html?v=6",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#EEF4F2",
   "theme_color": "#6C998A",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png?v=4",
+      "src": "/icon-192.png?v=6",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/icon-512.png?v=4",
+      "src": "/icon-512.png?v=6",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
