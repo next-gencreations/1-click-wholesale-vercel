@@ -1,7 +1,8 @@
 {
   "name": "1-Click Profit Finder",
   "short_name": "Profit Finder",
-  "start_url": "/",
+  "description": "Scan products, check profit and save winning finds.",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#EEF4F2",
