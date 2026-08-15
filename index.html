@@ -14,38 +14,39 @@
 <meta name="theme-color" content="#6C998A">
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:18px;font-family:Arial,sans-serif;background:linear-gradient(to bottom,#EEF4F2,#DDE7E3);color:#24323D}
+body{margin:0;padding:18px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(to bottom,#EEF4F2,#DDE7E3);color:#24323D;-webkit-font-smoothing:antialiased}
 .card{max-width:520px;margin:auto;background:white;border-radius:32px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.10)}
-.logo{text-align:center;font-size:62px;margin-bottom:6px}
-h1{text-align:center;font-size:38px;margin:0;font-weight:1000;line-height:1}
-.sub{text-align:center;margin-top:14px;color:#5B6770;font-size:17px;font-weight:700}
-.scanButton{width:100%;margin-top:28px;padding:24px;border:none;border-radius:24px;background:linear-gradient(135deg,#36C95D,#249944);color:white;font-size:24px;font-weight:1000;box-shadow:0 8px 24px rgba(54,201,93,.35)}
-.notice{margin-top:18px;padding:16px;border-radius:20px;background:#F7FAF9;color:#55796D;text-align:center;font-size:17px;font-weight:900}
+.logoBadge{width:68px;height:68px;margin:0 auto 14px;border-radius:20px;background:linear-gradient(135deg,#36C95D,#1E7A36);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(30,122,54,.35)}
+h1{text-align:center;font-size:36px;margin:0;font-weight:800;line-height:1.1;letter-spacing:-.5px}
+.sub{text-align:center;margin-top:12px;color:#5B6770;font-size:16px;font-weight:600}
+.scanButton{width:100%;margin-top:28px;padding:22px;border:none;border-radius:20px;background:linear-gradient(135deg,#36C95D,#249944);color:white;font-size:19px;font-weight:800;letter-spacing:.2px;box-shadow:0 8px 24px rgba(54,201,93,.35);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
+.notice{margin-top:18px;padding:16px;border-radius:20px;background:#F7FAF9;color:#55796D;text-align:center;font-size:16px;font-weight:700}
 .productImage{width:100%;max-height:220px;object-fit:contain;margin-top:16px;border-radius:22px;background:#F7FAF9;display:none}
-label{display:block;margin-top:22px;margin-bottom:8px;font-size:15px;font-weight:900}
-input{width:100%;padding:18px;border-radius:18px;border:2px solid #D8DDDF;font-size:18px;background:white}
-.switch{margin-top:18px;background:#F7FAF9;border-radius:18px;padding:16px;display:flex;justify-content:space-between;align-items:center;font-weight:800}
+label{display:block;margin-top:22px;margin-bottom:8px;font-size:14px;font-weight:700;color:#5B6770;text-transform:uppercase;letter-spacing:.3px}
+input{width:100%;padding:16px 18px;border-radius:16px;border:2px solid #D8DDDF;font-size:17px;background:white;font-family:inherit}
+.switch{margin-top:18px;background:#F7FAF9;border-radius:18px;padding:16px;display:flex;justify-content:space-between;align-items:center;font-weight:600}
 .switch input{width:24px;height:24px}
-.mainButton{width:100%;margin-top:20px;padding:20px;border:none;border-radius:22px;background:linear-gradient(135deg,#6C998A,#55796D);color:white;font-size:22px;font-weight:1000}
+.mainButton{width:100%;margin-top:20px;padding:19px;border:none;border-radius:20px;background:linear-gradient(135deg,#6C998A,#55796D);color:white;font-size:18px;font-weight:800;letter-spacing:.2px;cursor:pointer}
 .row{display:flex;gap:10px;margin-top:14px}
-.row button{flex:1;padding:18px;border:none;border-radius:18px;font-size:16px;font-weight:900;color:white}
+.row button{flex:1;padding:16px 10px;border:none;border-radius:16px;font-size:14px;font-weight:800;letter-spacing:.2px;color:white;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
 .lookup{background:#009688}.amazon{background:#2196F3}.manual{background:#E91E63}.link{background:#FF9800}.save{background:#8E44AD}.clear{background:#666}.copy{background:#111}.share{background:#00A884}
 .resultCard{margin-top:26px;border-radius:28px;padding:24px;display:none;color:white;animation:pop .35s ease}
 @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
-.resultCard h2{margin:0 0 12px 0;font-size:38px;text-align:center}
-.resultCard p{margin:12px 0;font-size:20px;font-weight:800}
+.resultCard h2{margin:0 0 12px 0;font-size:34px;text-align:center;letter-spacing:-.5px}
+.resultCard p{margin:12px 0;font-size:19px;font-weight:700}
 .buy{background:linear-gradient(135deg,#1E7A36,#34B34F);box-shadow:0 10px 28px rgba(52,179,79,.35)}
 .maybe{background:linear-gradient(135deg,#D98A00,#F9B233);box-shadow:0 10px 28px rgba(249,178,51,.35)}
 .skip{background:linear-gradient(135deg,#9C1F1F,#D83A3A);box-shadow:0 10px 28px rgba(216,58,58,.35)}
 .saved{margin-top:28px;padding:20px;background:#F7FAF9;border-radius:24px}
 .savedHeader{display:flex;justify-content:space-between;align-items:center}
-.sectionTitle{font-size:26px;font-weight:1000}
-.savedCount{background:#24323D;color:white;padding:6px 12px;border-radius:999px;font-size:14px;font-weight:900}
+.sectionTitle{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.savedCount{background:#24323D;color:white;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700}
 .savedItem{margin-top:14px;background:white;padding:16px;border-radius:18px;border:1px solid #D8DDDF}
-.savedTitle{font-weight:1000;font-size:18px}
-.savedVerdict{margin-top:8px;font-size:14px;font-weight:900}
-.savedText{margin-top:5px;color:#5B6770;font-size:14px}
+.savedTitle{font-weight:800;font-size:17px}
+.savedVerdict{margin-top:8px;font-size:13px;font-weight:700}
+.savedText{margin-top:5px;color:#5B6770;font-size:13px}
 .buyText{color:#1E7A36}.maybeText{color:#D98A00}.skipText{color:#C62828}
+.icon{flex-shrink:0}
 </style>
 </head>
 
@@ -53,13 +54,27 @@ input{width:100%;padding:18px;border-radius:18px;border:2px solid #D8DDDF;font-s
 
 <div class="card">
 
-<div class="logo">📦</div>
+<div class="logoBadge">
+<svg class="icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M4 9V6a2 2 0 0 1 2-2h3"/>
+<path d="M20 9V6a2 2 0 0 0-2-2h-3"/>
+<path d="M4 15v3a2 2 0 0 0 2 2h3"/>
+<path d="M20 15v3a2 2 0 0 1-2 2h-3"/>
+<circle cx="12" cy="12" r="3"/>
+</svg>
+</div>
 
 <h1>1-Click Profit Finder</h1>
 <div class="sub">Scan products. Check profit. Save winners.</div>
 
-<button class="scanButton" onclick="goScan()">📷 SCAN BARCODE</button>
-<button class="scanButton" style="margin-top:12px;background:linear-gradient(135deg,#2196F3,#1769AA);box-shadow:0 8px 24px rgba(33,150,243,.35)" onclick="goPhotoScan()">📸 PHOTO SCAN (NO BARCODE)</button>
+<button class="scanButton" onclick="goScan()">
+<svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="4" x2="3" y2="20"/><line x1="7" y1="4" x2="7" y2="20"/><line x1="11" y1="4" x2="11" y2="20" stroke-width="3"/><line x1="15" y1="4" x2="15" y2="20"/><line x1="19" y1="4" x2="19" y2="20" stroke-width="3"/><line x1="21" y1="4" x2="21" y2="20"/></svg>
+SCAN BARCODE
+</button>
+<button class="scanButton" style="margin-top:12px;background:linear-gradient(135deg,#2196F3,#1769AA);box-shadow:0 8px 24px rgba(33,150,243,.35)" onclick="goPhotoScan()">
+<svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg>
+PHOTO SCAN (NO BARCODE)
+</button>
 
 <div class="notice" id="notice">Scan a product to begin</div>
 
@@ -85,21 +100,42 @@ input{width:100%;padding:18px;border-radius:18px;border:2px solid #D8DDDF;font-s
 <input id="vatToggle" type="checkbox">
 </div>
 
-<button class="mainButton" onclick="calculate()">💰 CHECK PROFIT</button>
+<button class="mainButton" onclick="calculate()">
+<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1.4 1.2-2.2 2.5-2.2s2.5.9 2.5 2c0 1.6-2 1.7-2.5 2.7-.2.4-.2 1-.2 1.5M9.5 15.5c0 1.3 1.2 2 2.5 2s2.5-.7 2.5-2"/></svg>
+CHECK PROFIT
+</button>
 
 <div class="row">
-<button class="lookup" onclick="lookupProduct()">🔎 LOOKUP</button>
-<button class="amazon" onclick="openAmazon()">🛒 AMAZON</button>
+<button class="lookup" onclick="lookupProduct()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><line x1="20" y1="20" x2="15.5" y2="15.5"/></svg>
+LOOKUP
+</button>
+<button class="amazon" onclick="openAmazon()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2 3h2l2.4 12.2a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+AMAZON
+</button>
 </div>
 
 <div class="row">
-<button class="link" onclick="pasteAmazonLink()">🔗 LINK</button>
-<button class="manual" onclick="manualLookup()">✍️ MANUAL</button>
+<button class="link" onclick="pasteAmazonLink()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l1-1a3.5 3.5 0 0 1 5 5l-1 1"/><path d="M13 18l-1 1a3.5 3.5 0 0 1-5-5l1-1"/></svg>
+LINK
+</button>
+<button class="manual" onclick="manualLookup()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+MANUAL
+</button>
 </div>
 
 <div class="row">
-<button class="copy" onclick="copyAffiliateLink()">📋 COPY</button>
-<button class="share" onclick="shareDeal()">📤 SHARE</button>
+<button class="copy" onclick="copyAffiliateLink()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+COPY
+</button>
+<button class="share" onclick="shareDeal()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><line x1="8.2" y1="10.7" x2="15.8" y2="6.3"/><line x1="8.2" y1="13.3" x2="15.8" y2="17.7"/></svg>
+SHARE
+</button>
 </div>
 
 <div id="resultCard" class="resultCard">
@@ -112,8 +148,14 @@ input{width:100%;padding:18px;border-radius:18px;border:2px solid #D8DDDF;font-s
 </div>
 
 <div class="row">
-<button class="save" onclick="saveScan()">⭐ SAVE</button>
-<button class="clear" onclick="clearAll()">🗑 CLEAR</button>
+<button class="save" onclick="saveScan()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12,2 15,9 22,9.3 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9.3 9,9"/></svg>
+SAVE
+</button>
+<button class="clear" onclick="clearAll()">
+<svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,6 5,6 21,6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+CLEAR
+</button>
 </div>
 
 <div class="saved">
