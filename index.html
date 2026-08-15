@@ -207,6 +207,7 @@ function buildAmazonSearchUrl(){
 async function lookupProduct(){
   const barcode=clean(document.getElementById("barcode").value);
   const product=clean(document.getElementById("productName").value);
+  const brand=clean(document.getElementById("brandName").value);
 
   if(!barcode && !product){
     alert("Scan or enter a product first");
@@ -228,8 +229,10 @@ async function lookupProduct(){
       return;
     }
 
+    const finalBrand=data.brand || brand;
+
     document.getElementById("productName").value=data.productName || product || barcode;
-    document.getElementById("brandName").value=data.brand || "";
+    document.getElementById("brandName").value=finalBrand;
     document.getElementById("barcode").value=data.barcode || barcode;
 
     if(data.image){
@@ -238,7 +241,7 @@ async function lookupProduct(){
       img.style.display="block";
     }
 
-    const search=[data.brand,data.productName].filter(Boolean).join(" ") || barcode || product;
+    const search=[finalBrand,data.productName].filter(Boolean).join(" ") || barcode || product;
     const amazonUrl="https://www.amazon.co.uk/s?k="+encodeURIComponent(search)+"&tag="+encodeURIComponent(AFFILIATE_TAG);
     localStorage.setItem("amazonLink",amazonUrl);
 
