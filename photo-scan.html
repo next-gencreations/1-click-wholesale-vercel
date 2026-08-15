@@ -99,50 +99,81 @@
       document.getElementById("status").innerText = text;
     }
 
+    function resizeImage(file, maxDim, quality){
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+
+        img.onload = () => {
+          let { width, height } = img;
+
+          if (width > height && width > maxDim) {
+            height = Math.round(height * (maxDim / width));
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round(width * (maxDim / height));
+            height = maxDim;
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+
+          URL.revokeObjectURL(url);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Could not load photo"));
+        };
+
+        img.src = url;
+      });
+    }
+
     document.getElementById("photoInput").addEventListener("change", async (e) => {
       const file = e.target.files[0];
       if(!file) return;
 
       const captureBtn = document.getElementById("captureBtn");
       captureBtn.disabled = true;
+      setStatus("Processing photo...");
 
-      const reader = new FileReader();
+      try {
+        const resized = await resizeImage(file, 1024, 0.75);
 
-      reader.onload = async () => {
         document.getElementById("preview").innerHTML =
-          '<img src="' + reader.result + '">';
+          '<img src="' + resized + '">';
 
         setStatus("Identifying item...");
 
-        try {
-          const res = await fetch("/api/photo-lookup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: reader.result })
-          });
+        const res = await fetch("/api/photo-lookup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: resized })
+        });
 
-          const data = await res.json();
+        const data = await res.json();
 
-          if (!res.ok || !data.success || !data.name) {
-            setStatus(data.error || "Couldn't identify item — go back and enter it manually");
-            captureBtn.disabled = false;
-            return;
-          }
-
-          localStorage.setItem("scannedName", data.name);
-          localStorage.setItem("scannedBrand", data.brand || "");
-          localStorage.removeItem("scannedBarcode");
-          localStorage.removeItem("amazonLink");
-
-          setStatus("Identified: " + data.name);
-          window.location.href = "index.html";
-        } catch (err) {
-          setStatus("Error identifying item — go back and enter it manually");
+        if (!res.ok || !data.success || !data.name) {
+          setStatus(data.error || "Couldn't identify item — go back and enter it manually");
           captureBtn.disabled = false;
+          return;
         }
-      };
 
-      reader.readAsDataURL(file);
+        localStorage.setItem("scannedName", data.name);
+        localStorage.setItem("scannedBrand", data.brand || "");
+        localStorage.removeItem("scannedBarcode");
+        localStorage.removeItem("amazonLink");
+
+        setStatus("Identified: " + data.name);
+        window.location.href = "index.html";
+      } catch (err) {
+        setStatus("Error identifying item — go back and enter it manually");
+        captureBtn.disabled = false;
+      }
     });
   </script>
 
