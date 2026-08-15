@@ -58,7 +58,8 @@ input{width:100%;padding:18px;border-radius:18px;border:2px solid #D8DDDF;font-s
 <h1>1-Click Profit Finder</h1>
 <div class="sub">Scan products. Check profit. Save winners.</div>
 
-<button class="scanButton" onclick="goScan()">📷 SCAN PRODUCT</button>
+<button class="scanButton" onclick="goScan()">📷 SCAN BARCODE</button>
+<button class="scanButton" style="margin-top:12px;background:linear-gradient(135deg,#2196F3,#1769AA);box-shadow:0 8px 24px rgba(33,150,243,.35)" onclick="goPhotoScan()">📸 PHOTO SCAN (NO BARCODE)</button>
 
 <div class="notice" id="notice">Scan a product to begin</div>
 
@@ -132,6 +133,10 @@ function goScan(){
   window.location.href="barcode-scanner.html";
 }
 
+function goPhotoScan(){
+  window.location.href="photo-scan.html";
+}
+
 function setNotice(text){
   document.getElementById("notice").innerText=text;
 }
@@ -195,9 +200,26 @@ async function lookupProduct(){
     const amazonUrl="https://www.amazon.co.uk/s?k="+encodeURIComponent(search)+"&tag="+encodeURIComponent(AFFILIATE_TAG);
     localStorage.setItem("amazonLink",amazonUrl);
 
-    setNotice("Product found — Amazon affiliate link ready");
+    setNotice("Product found — checking Amazon price...");
+    await lookupAmazonPrice(search);
   }catch(e){
     setNotice("Lookup error — try Amazon/manual");
+  }
+}
+
+async function lookupAmazonPrice(search){
+  try{
+    const res=await fetch("/api/amazon-price?query="+encodeURIComponent(search));
+    const data=await res.json();
+
+    if(data.success && typeof data.price==="number"){
+      document.getElementById("amazon").value=data.price.toFixed(2);
+      setNotice("Amazon price found — enter shop price and check profit");
+    }else{
+      setNotice("Product found — enter Amazon price manually");
+    }
+  }catch(e){
+    setNotice("Product found — enter Amazon price manually");
   }
 }
 
@@ -410,7 +432,7 @@ window.onload=async ()=>{
   document.getElementById("productName").value=name;
   document.getElementById("brandName").value=brand;
 
-  if(barcode){
+  if(barcode || name){
     await lookupProduct();
   }
 }
